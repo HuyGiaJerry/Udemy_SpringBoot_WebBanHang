@@ -1,23 +1,23 @@
 --CREATE BY JerryNguyen
 -- Date: 01/07/2025
-CREATE DATABASE udemy_shopapp;
-use udemy_shopapp;
--- TABLES
--- Users
+CREATE DATABASE IF NOT EXISTS udemy_shopapp;
+USE udemy_shopapp;
 
 -- Roles 
 CREATE TABLE roles (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(50) NOT NULL,
+    name VARCHAR(50) NOT NULL
 );
+
+-- Users
 CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    fullname VARCHAR(100) DEFaULT '',
-    phone_number VARCHAR(10) DEFAULT NOT NULL,
-    address VARCHAR(200)   DEFAULT '',
+    fullname VARCHAR(100) DEFAULT '',
+    phone_number VARCHAR(10) NOT NULL DEFAULT '',
+    address VARCHAR(200) DEFAULT '',
     password VARCHAR(100) NOT NULL DEFAULT '',
     create_at DATETIME,
-    update_at DATETIME ,
+    update_at DATETIME,
     is_active TINYINT(1) DEFAULT 1,
     date_of_birth DATE,
     facebook_id INT DEFAULT 0,
@@ -25,6 +25,7 @@ CREATE TABLE users (
     role_id INT,
     FOREIGN KEY (role_id) REFERENCES roles(id)
 );
+
 -- Tokens 
 CREATE TABLE tokens (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -51,7 +52,7 @@ CREATE TABLE social_accounts (
 -- Categories 
 CREATE TABLE categories (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL
 );
 
 -- Products 
@@ -62,9 +63,18 @@ CREATE TABLE products (
     price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
     category_id INT,
     thumpnail VARCHAR(300) DEFAULT '',
-    created_at DATETIME ,
-    updated_at DATETIME ,
+    created_at DATETIME,
+    updated_at DATETIME,
     FOREIGN KEY (category_id) REFERENCES categories(id)
+);
+
+-- Product images 
+CREATE TABLE product_images (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    product_id INT,
+    image_url VARCHAR(300) NOT NULL,
+    CONSTRAINT fk_product_image_id FOREIGN KEY (product_id)
+        REFERENCES products(id) ON DELETE CASCADE
 );
 
 -- Orders 
@@ -77,7 +87,7 @@ CREATE TABLE orders (
     address VARCHAR(200) NOT NULL,
     note VARCHAR(100) DEFAULT '',
     order_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    status ENUM('pending', 'processing', 'shipped','delivered', 'cancelled') DEFAULT 'pending' COMMENT 'Trạng thái đơn hàng',
+    status ENUM('pending', 'processing', 'shipped','delivered', 'cancelled') DEFAULT 'pending',
     total DECIMAL(10, 2) CHECK (total >= 0),
     shipping_method VARCHAR(100),
     shipping_address VARCHAR(200),

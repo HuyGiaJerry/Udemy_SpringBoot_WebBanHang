@@ -1,3 +1,7 @@
+
 - Request: request body , request param, request variable
 - Validation: validated, valid , Binding result, not empty(message)
 - Lombok: data, getter, setter , contructer(allarg...)
+
+
+- JsonProperty , Consumes = Media_Type.MultiPart , Autowired , ModelAttribute , Long !=(long)
