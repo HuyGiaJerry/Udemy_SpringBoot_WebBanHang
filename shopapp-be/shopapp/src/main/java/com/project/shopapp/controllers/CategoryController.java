@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 //@Validated
-@RequestMapping("api/v1/categories")
+@RequestMapping("${api.prefix}/categories")
 public class CategoryController {
     // Hiển thị tất cả
     @GetMapping("") // http://localhost:8088/api/v1/categories?page=2&limit=10
