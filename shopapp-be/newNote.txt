@@ -2,6 +2,7 @@
 - Request: request body , request param, request variable
 - Validation: validated, valid , Binding result, not empty(message)
 - Lombok: data, getter, setter , contructer(allarg...)
+- jpa: @Table,@Entity , @ManyToOne, @Column , @JoinColumn ......
 
 
-- JsonProperty , Consumes = Media_Type.MultiPart , Autowired , ModelAttribute , Long !=(long)
+- JsonProperty , Consumes = Media_Type.MultiPart , Autowired , ModelAttribute , Long !=(long) , path(config, ${api.prefix}), jdbc:mysql://localhost:3306/app?useSSL=false&serverTimezone=UTC 
