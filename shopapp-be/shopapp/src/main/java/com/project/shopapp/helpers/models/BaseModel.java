@@ -1,4 +1,4 @@
-package com.project.shopapp.models;
+package com.project.shopapp.helpers.models;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
@@ -14,7 +14,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @MappedSuperclass
-public class BaseCreateUpdateModel {
+@Builder
+public class BaseModel {
     @Column(name = "create_at")
     private LocalDateTime createAt;
 

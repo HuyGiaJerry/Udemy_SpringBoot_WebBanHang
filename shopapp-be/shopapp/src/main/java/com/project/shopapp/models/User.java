@@ -1,5 +1,6 @@
 package com.project.shopapp.models;
 
+import com.project.shopapp.helpers.models.BaseModel;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User extends BaseCreateUpdateModel{
+public class User extends BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

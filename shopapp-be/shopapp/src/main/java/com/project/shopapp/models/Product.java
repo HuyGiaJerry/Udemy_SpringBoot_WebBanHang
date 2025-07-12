@@ -1,10 +1,8 @@
 package com.project.shopapp.models;
 
+import com.project.shopapp.helpers.models.BaseModel;
 import jakarta.persistence.*;
 import lombok.*;
-
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "products")
@@ -13,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Product extends BaseCreateUpdateModel{
+public class Product extends BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
