@@ -11,6 +11,7 @@ import com.project.shopapp.models.ProductImage;
 import com.project.shopapp.repositories.CategoryRepository;
 import com.project.shopapp.repositories.ProductImageRepository;
 import com.project.shopapp.repositories.ProductRepository;
+import com.project.shopapp.responses.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -59,17 +60,31 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Page<Product> getAllProducts(PageRequest pageRequest) {
+    public Page<ProductResponse> getAllProducts(PageRequest pageRequest) {
         // Lấy ra danh sách sản phẩm với phân trang(page , limit)
 
-        return productRepository.findAll(pageRequest);
+        return productRepository.findAll(pageRequest).map(product -> {
+                    ProductResponse productResponse = ProductResponse
+                            .builder()
+                            .name(product.getName())
+                            .price(product.getPrice())
+                            .thumbnail(product.getThumpnail())
+                            .description(product.getDescription())
+                            .categoryId(product.getCategory().getId())
+                            .build();
+                    productResponse.setCreateAt(product.getCreateAt());
+                    productResponse.setUpdateAt(product.getUpdateAt());
+                    return productResponse;
+                }
+        );
+
     }
 
     @Override
     public Product updateProduct(Long id, ProductDTO productDTO) {
         try {
             Product existingProduct = getProductById(id);
-            if(existingProduct != null) {
+            if (existingProduct != null) {
                 // Copy các trường từ productDTO vào existingProduct
 
                 Category existingCategory = categoryRepository
@@ -82,8 +97,7 @@ public class ProductService implements IProductService {
                 existingProduct.setCategory(existingCategory);
                 existingProduct.setThumpnail(productDTO.getThumbnail());
                 return productRepository.save(existingProduct);
-            }
-            else {
+            } else {
                 throw new DataNotFoundException("Product not found with id: " + id);
             }
         } catch (DataNotFoundException e) {
@@ -105,7 +119,7 @@ public class ProductService implements IProductService {
 
     @Override
     public ProductImage createProductImage(Long productId,
-                                            ProductImageDTO productImageDTO) {
+                                           ProductImageDTO productImageDTO) {
 
         try {
             Product existingProduct = productRepository
@@ -118,7 +132,7 @@ public class ProductService implements IProductService {
             // Kiểm tra số lượng hình ảnh mà sản phẩm đã có
             int size = productImageRepository.findByProductId(productId).size();
             if (size >= ProductImage.MAX_IMAGES_PER_PRODUCT) {
-                throw new InvalidParamException("Cannot add more than "+ProductImage.MAX_IMAGES_PER_PRODUCT+" images for a product");
+                throw new InvalidParamException("Cannot add more than " + ProductImage.MAX_IMAGES_PER_PRODUCT + " images for a product");
             }
             return productImageRepository.save(newProductImage);
 

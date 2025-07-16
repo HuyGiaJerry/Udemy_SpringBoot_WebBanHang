@@ -5,11 +5,15 @@ import com.project.shopapp.dtos.ProductImageDTO;
 import com.project.shopapp.helpers.file.FileHelper;
 import com.project.shopapp.models.Product;
 import com.project.shopapp.models.ProductImage;
+import com.project.shopapp.responses.ProductListResponse;
+import com.project.shopapp.responses.ProductResponse;
 import com.project.shopapp.services.ProductService;
 import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +38,17 @@ public class ProductController {
 
     // Tất cả sản phẩm có phân trang (page, limit)
     @GetMapping("")
-    public ResponseEntity<String> getProducts(@PathParam("page") int page, @PathParam("limit") int limit) {
-        return ResponseEntity.ok("Product list page " + page + " limit " + limit);
+    public ResponseEntity<ProductListResponse> getProducts(
+            @PathParam("page") int page,
+            @PathParam("limit") int limit) {
+        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createAt").descending());
+        int totalPage = productService.getAllProducts(pageRequest).getTotalPages();
+        List<ProductResponse> products = productService.getAllProducts(pageRequest).getContent();
+
+        return ResponseEntity.ok(ProductListResponse.builder()
+                .products(products)
+                .totalPages(totalPage)
+                .build());
     }
 
     // Sản phẩm theo ID
@@ -77,7 +90,7 @@ public class ProductController {
             // Kiểm tra đầu vào không đc vượt quá 5 images
             if (files.size() > ProductImage.MAX_IMAGES_PER_PRODUCT) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("You can upload up to "+ProductImage.MAX_IMAGES_PER_PRODUCT+" images only !");
+                        .body("You can upload up to " + ProductImage.MAX_IMAGES_PER_PRODUCT + " images only !");
             }
             // Kiểm tra nếu không có file nào được upload
             if (files == null || files.isEmpty() || files.stream().allMatch(f -> f.isEmpty() || f.getSize() == 0)) {
