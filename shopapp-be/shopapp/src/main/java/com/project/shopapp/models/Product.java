@@ -9,6 +9,7 @@ import lombok.*;
 @Data
 @Setter
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Product extends BaseModel {
@@ -21,8 +22,8 @@ public class Product extends BaseModel {
 
     private Float price;
 
-    @Column(name = "thumbnail",length = 300)
-    private String thumbnail;
+    @Column(name = "thumpnail",length = 300)
+    private String thumpnail;
 
     @Column(name = "description")
     private String description;
