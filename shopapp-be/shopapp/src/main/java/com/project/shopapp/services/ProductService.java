@@ -38,6 +38,7 @@ public class ProductService implements IProductService {
             Product newProduct = Product.builder()
                     .name(productDTO.getName())
                     .description(productDTO.getDescription())
+                    .thumpnail(productDTO.getThumbnail())
                     .price(productDTO.getPrice())
                     .category(existingCategory)
                     .build();
@@ -63,21 +64,9 @@ public class ProductService implements IProductService {
     public Page<ProductResponse> getAllProducts(PageRequest pageRequest) {
         // Lấy ra danh sách sản phẩm với phân trang(page , limit)
 
-        return productRepository.findAll(pageRequest).map(product -> {
-                    ProductResponse productResponse = ProductResponse
-                            .builder()
-                            .name(product.getName())
-                            .price(product.getPrice())
-                            .thumbnail(product.getThumpnail())
-                            .description(product.getDescription())
-                            .categoryId(product.getCategory().getId())
-                            .build();
-                    productResponse.setCreateAt(product.getCreateAt());
-                    productResponse.setUpdateAt(product.getUpdateAt());
-                    return productResponse;
-                }
-        );
-
+        return productRepository
+                .findAll(pageRequest)
+                .map(ProductResponse::convertProductToResponse);
     }
 
     @Override

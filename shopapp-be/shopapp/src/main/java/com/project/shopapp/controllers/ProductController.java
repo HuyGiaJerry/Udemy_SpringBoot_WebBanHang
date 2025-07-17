@@ -11,6 +11,7 @@ import com.project.shopapp.services.ProductService;
 import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
+import net.datafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -53,8 +54,13 @@ public class ProductController {
 
     // Sản phẩm theo ID
     @GetMapping("/{id}")
-    public ResponseEntity<String> getProductById(@PathVariable long id) {
-        return ResponseEntity.ok("Get Product " + id);
+    public ResponseEntity<?> getProductById(@PathVariable long id) {
+        try {
+            Product existingProduct = productService.getProductById(id);
+            return ResponseEntity.ok(ProductResponse.convertProductToResponse(existingProduct));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
 
@@ -127,14 +133,47 @@ public class ProductController {
 
     // Cập nhật sản phẩm
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateProduct(@PathVariable long id) {
-        return ResponseEntity.ok("Update Product " + id);
+    public ResponseEntity<?> updateProduct(
+            @PathVariable long id,
+            @RequestBody ProductDTO productDTO
+    ) {
+        try {
+            Product updatedProduct = productService.updateProduct(id, productDTO);
+            return ResponseEntity.ok(updatedProduct);
+        } catch (Exception e) {
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
     }
 
     // Xóa sản phẩm
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable long id) {
-        return ResponseEntity.ok("Delete Product " + id);
+        productService.deleteProduct(id);
+        return ResponseEntity.ok("Delete Product " + id + " successfully!");
     }
+
+    // @PostMapping("/generateFakeDataProducts")
+    private ResponseEntity<String> generateFakeDataProducts() {
+        Faker faker = new Faker();
+        for (int i = 0; i < 100; i++) {
+            String productName = faker.commerce().productName();
+            if (productService.existsByName(productName)) {
+                continue;
+            }
+            ProductDTO productDTO = ProductDTO.builder()
+                    .name(productName)
+                    .price((float) faker.number().numberBetween(1000, 100000000))
+                    .description(faker.lorem().sentence())
+                    .thumbnail("")
+                    .categoryId((long) faker.number().numberBetween(2, 6))
+                    .build();
+            productService.createProduct(productDTO);
+        }
+
+
+        return ResponseEntity.ok("Generate fake data products successfully!");
+    }
+
 
 }
