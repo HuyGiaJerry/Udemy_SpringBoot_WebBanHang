@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.cglib.core.Local;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -40,7 +41,7 @@ public class Order {
     private String note;
 
     @Column(name="order_date")
-    private LocalDateTime orderDate;
+    private Date orderDate;
 
     @Column(name = "status")
     private String status;
@@ -55,7 +56,7 @@ public class Order {
     private String shippingAddress;
 
     @Column(name = "shipping_date")
-    private Date shippingDate;
+    private LocalDate shippingDate;
 
     @Column(name = "tracking_number")
     private String trackingNumber;

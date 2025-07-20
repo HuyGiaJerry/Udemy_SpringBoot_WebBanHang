@@ -15,10 +15,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @MappedSuperclass
 public class BaseModel {
-    @Column(name = "created_at")
+    @Column(name = "create_at")
     private LocalDateTime createAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "update_at")
     private LocalDateTime updateAt;
 
     @PrePersist

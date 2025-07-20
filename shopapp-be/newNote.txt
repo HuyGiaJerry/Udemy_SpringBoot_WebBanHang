@@ -7,3 +7,5 @@
 
 - JsonProperty , Consumes = Media_Type.MultiPart , Autowired , ModelAttribute , Long !=(long) , path(config, ${api.prefix}), jdbc:mysql://localhost:3306/app?useSSL=false&serverTimezone=UTC,
 final , tham số kiểu generic<T,DTO,ID> 
+- Dependecy: map-struct , datafaker,lombook,validtion,jpa,mysql connector 
+- Tải maven -> thêm vào path môi trường -> có mvn để tải về, tải lại hay generate(sinh ra) ra các annotation code .... các class Impl 

@@ -1,5 +1,6 @@
 package com.project.shopapp.helpers.services;
 
+import com.project.shopapp.exceptions.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -21,7 +22,7 @@ public abstract class BaseServiceImpl <T,DTO,ID> implements IBaseService<T,DTO,I
     }
 
     @Override
-    public void delete(ID id) {
+    public void delete(ID id) throws DataNotFoundException {
         // Xóa cứng
         repository.deleteById(id);
     }

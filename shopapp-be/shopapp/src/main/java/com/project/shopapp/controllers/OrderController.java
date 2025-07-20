@@ -1,8 +1,12 @@
 package com.project.shopapp.controllers;
-
 import com.project.shopapp.dtos.OrderDTO;
+import com.project.shopapp.exceptions.DataNotFoundException;
+import com.project.shopapp.mappers.OrderMapper;
+import com.project.shopapp.models.Order;
+import com.project.shopapp.responses.OrderResponse;
+import com.project.shopapp.services.OrderService;
 import jakarta.validation.Valid;
-import org.springframework.core.annotation.Order;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -12,10 +16,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("${api.prefix}/orders")
+@RequiredArgsConstructor
 public class OrderController {
 
+    private final OrderService orderService;
+    private final OrderMapper orderMapper;
+
+    // Insert new Order
     @PostMapping("")
-    public ResponseEntity<?> insertOrder(
+    public ResponseEntity<?> createOrder(
             @Valid @RequestBody OrderDTO orderDTO,
             BindingResult bindingResult
     ) {
@@ -27,17 +36,36 @@ public class OrderController {
                         .toList();
                 return ResponseEntity.badRequest().body(errMessages);
             }
-            return ResponseEntity.ok().body("Insert Order successful");
+
+            Order order = orderService.create(orderDTO);
+            OrderResponse orderResponse = orderMapper.toResponse(order);
+
+            return ResponseEntity.ok().body(orderResponse);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @GetMapping("/{user_id}")
-    public ResponseEntity<?> getOrderByUserId(
+    // Get all orders by user_id
+    @GetMapping("/user/{user_id}")
+    public ResponseEntity<?> getOrdersByUserId(
             @Valid @PathVariable("user_id") Long userId) {
         try {
-            return ResponseEntity.ok().body("Get Order by Id = "+userId);
+            List<Order> orders = orderService.getByUserId(userId);
+
+            return ResponseEntity.ok().body(orders);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // Get order by order_id
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getOrderById(
+            @Valid @PathVariable("id") Long id) {
+        try {
+            Order existingOrder =  orderService.getById(id);
+            return ResponseEntity.ok().body(existingOrder);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -48,7 +76,12 @@ public class OrderController {
             @Valid @PathVariable Long id,
             @Valid @RequestBody OrderDTO orderDTO
             ){
-        return ResponseEntity.ok().body("Update Order "+id+" successful");
+        try {
+            Order updatedOrder = orderService.update(id, orderDTO);
+            return ResponseEntity.ok().body(updatedOrder);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -56,7 +89,12 @@ public class OrderController {
             @Valid @PathVariable Long id
     ){
         // Xóa mềm qua trường active
-        return ResponseEntity.ok().body("Delete Order "+id+" successful");
+        try {
+            orderService.delete(id);
+            return ResponseEntity.ok().body("Delete Order "+id+" successful");
+        } catch (DataNotFoundException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 }

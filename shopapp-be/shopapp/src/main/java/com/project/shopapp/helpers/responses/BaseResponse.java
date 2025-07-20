@@ -1,7 +1,6 @@
 package com.project.shopapp.helpers.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import lombok.*;
 
@@ -13,10 +12,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @MappedSuperclass
 public class BaseResponse {
-    @JsonProperty("created_at")
+    @JsonProperty("create_at")
     private LocalDateTime createAt;
 
-    @JsonProperty("updated_at")
+    @JsonProperty("update_at")
     private LocalDateTime updateAt;
 
 }
