@@ -4,7 +4,7 @@ import com.project.shopapp.exceptions.DataNotFoundException;
 import com.project.shopapp.mappers.OrderMapper;
 import com.project.shopapp.models.Order;
 import com.project.shopapp.responses.OrderResponse;
-import com.project.shopapp.services.OrderService;
+import com.project.shopapp.services.order.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

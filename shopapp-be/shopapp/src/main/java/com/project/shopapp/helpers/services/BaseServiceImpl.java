@@ -13,7 +13,7 @@ public abstract class BaseServiceImpl <T,DTO,ID> implements IBaseService<T,DTO,I
 
     @Override
     public T getById(ID id) {
-        return repository.findById(id).orElseThrow(()-> new RuntimeException("Not found"));
+        return repository.findById(id).orElseThrow(()-> new RuntimeException("Not found the object with id: " + id));
     }
 
     @Override

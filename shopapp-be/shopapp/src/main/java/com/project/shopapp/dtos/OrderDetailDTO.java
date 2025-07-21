@@ -18,11 +18,11 @@ public class OrderDetailDTO {
     @Min(value=1,message = "ProductId > 1")
     private Long productId;
     @Min(value=0,message = "Price >= 0")
-    private Long price;
+    private Float price;
     @Min(value=1,message = "Quantity >= 1")
     private Long quantity;
     @Min(value=0,message = "TotalMoney >= 0")
-    private Long total;
+    private Float total;
 
     private String color;
 }

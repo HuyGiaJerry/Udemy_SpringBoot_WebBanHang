@@ -10,6 +10,7 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
 
+    @Mapping(target ="user.id" , source = "userId")
     Order toEntity(OrderDTO orderDTO);
 
     @Mapping(target = "userId", source = "user.id")

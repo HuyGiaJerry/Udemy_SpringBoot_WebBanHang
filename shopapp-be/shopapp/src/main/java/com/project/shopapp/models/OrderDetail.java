@@ -30,7 +30,7 @@ public class OrderDetail {
     private int quantity;
 
     @Column(name = "total",nullable = false)
-    private Long total;
+    private Float total;
 
     @Column(name = "color")
     private String color;
