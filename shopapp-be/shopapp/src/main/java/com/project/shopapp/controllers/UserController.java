@@ -41,7 +41,7 @@ public class UserController {
                 return ResponseEntity.badRequest().body("Passwords do not match");
             }
             User user = userService.createUser(userDTO);
-            return ResponseEntity.ok().body("Register successful");
+            return ResponseEntity.ok().body(user);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -51,10 +51,15 @@ public class UserController {
     public ResponseEntity<?> login(
             @Valid @RequestBody UserLoginDTO userLoginDTO
     ){
-        // Kiểm tra thông tin đăng nhập
-        String token = userService.login(userLoginDTO.getPhoneNumber(), userLoginDTO.getPassword());
-        //  Trả về token trong response
-        return ResponseEntity.ok().body(token);
+        try {
+            // Kiểm tra thông tin đăng nhập
+            String token = userService.login(userLoginDTO.getPhoneNumber(), userLoginDTO.getPassword());
+
+            //  Trả về token trong response
+            return ResponseEntity.ok().body(token);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 }

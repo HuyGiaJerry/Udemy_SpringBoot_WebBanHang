@@ -2,6 +2,7 @@ package com.project.shopapp.services.user;
 
 import com.project.shopapp.dtos.UserDTO;
 import com.project.shopapp.exceptions.DataNotFoundException;
+import com.project.shopapp.exceptions.PermissionDenyException;
 import com.project.shopapp.models.Role;
 import com.project.shopapp.models.User;
 import com.project.shopapp.repositories.RoleRepository;
@@ -29,11 +30,17 @@ public class UserService implements IUserService {
 
 
     @Override
-    public User createUser(UserDTO userDTO) {
+    public User createUser(UserDTO userDTO) throws Exception {
         String phoneNumber = userDTO.getPhoneNumber();
         // Kiểm tra xem sdt đã tồn tại trong hệ thống chưa ?
         if (userRepository.existsByPhoneNumber(phoneNumber)) {
             throw new DataIntegrityViolationException("Số điện thoại đã tồn tại trong hệ thống");
+        }
+        Role role = roleRepository.findById(userDTO.getRoleId())
+                .orElseThrow(() -> new DataNotFoundException("Role không tồn tại trong hệ thống"));
+
+        if(role.getName().toUpperCase().equals(Role.ADMIN)){
+            throw new PermissionDenyException("Không thể tạo account với vai trò ADMIN");
         }
         // Convert UserDTO sang User
         User newUser = User.builder()
@@ -45,13 +52,10 @@ public class UserService implements IUserService {
                 .facebookId(userDTO.getFacebookId())
                 .googleId(userDTO.getGoogleId())
                 .build();
-        try {
-            Role role = roleRepository.findById(userDTO.getRoleId())
-                    .orElseThrow(() -> new DataNotFoundException("Role không tồn tại trong hệ thống"));
+
+
             newUser.setRole(role);
-        } catch (DataNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+
         // Kiểm tra nếu có accountId , không yêu cầu nhập mật khẩu
         if (userDTO.getFacebookId() == 0 && userDTO.getGoogleId() == 0) {
             String password = userDTO.getPassword();
@@ -63,7 +67,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public String login(String phoneNumber, String password) throws DataNotFoundException {
+    public String login(String phoneNumber, String password) throws Exception {
         Optional<User> optionalUser = userRepository.findByPhoneNumber(phoneNumber);
         if(optionalUser.isEmpty()) {
             throw new DataNotFoundException("Invalid phone number or password");
@@ -75,8 +79,9 @@ public class UserService implements IUserService {
                 throw new BadCredentialsException("Wrong phone number or password");
             }
         }
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(phoneNumber, password);
-
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                phoneNumber, password,existingUser.getAuthorities());
+        // Xác thực người dùng (Kiểm tra có ng dùng trong db ko ...)
         authenticationManager.authenticate(authenticationToken);
 
         return jwtToken.generateToken(existingUser);
