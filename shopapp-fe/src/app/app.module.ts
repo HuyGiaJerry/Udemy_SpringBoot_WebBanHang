@@ -11,9 +11,13 @@ import { OrderComponent } from './order/order.component';
 import { OrderConfirmComponent } from './order-confirm/order-confirm.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+
 
 const routes: Routes = [
-  { path: '', component: HomeComponent },
+  { path: '', component: RegisterComponent },
+  { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'products/:id', component: DetailProductComponent },
@@ -35,9 +39,13 @@ const routes: Routes = [
   ],
   imports: [
     BrowserModule,
+    FormsModule,
+    HttpClientModule,
     RouterModule.forRoot(routes)
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [
+    AppComponent
+  ]
 })
 export class AppModule { }

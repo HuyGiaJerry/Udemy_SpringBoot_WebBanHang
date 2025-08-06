@@ -52,8 +52,6 @@ public class UserService implements IUserService {
                 .facebookId(userDTO.getFacebookId())
                 .googleId(userDTO.getGoogleId())
                 .build();
-
-
             newUser.setRole(role);
 
         // Kiểm tra nếu có accountId , không yêu cầu nhập mật khẩu
