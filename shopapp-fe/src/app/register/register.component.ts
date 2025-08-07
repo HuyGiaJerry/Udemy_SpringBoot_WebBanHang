@@ -3,7 +3,7 @@ import { NgForm } from '@angular/forms';
 import { HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
-import { RegisterDTO } from '../dtos/register.dto';
+import { RegisterDTO } from '../dtos/user/register.dto';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -12,7 +12,7 @@ import { RegisterDTO } from '../dtos/register.dto';
 export class RegisterComponent {
   // Khai báo các biến ctuowng ứng với các trường trong form đăng ký
   @ViewChild('registerForm') registerForm !: NgForm;
-  phone: string;
+  phoneNumber: string;
   password: string;
   retypePassword: string;
   fullName: string;
@@ -21,7 +21,7 @@ export class RegisterComponent {
   dateOfBirth: Date;
 
   constructor(private router: Router, private userService: UserService) {
-    this.phone = '';
+    this.phoneNumber = '';
     this.password = '';
     this.retypePassword = '';
     this.fullName = '';
@@ -31,8 +31,8 @@ export class RegisterComponent {
     this.dateOfBirth.setFullYear(this.dateOfBirth.getFullYear() - 18); // Giả sử ngày sinh mặc định là 18 năm trước
   }
 
-  onPhoneChange() {
-    console.log(`Phone number changed: ${this.phone}`);
+  onChangePhoneNumber() {
+    console.log(`Phone number changed: ${this.phoneNumber}`);
   }
   // Match pass and retype pass
   checkPasswordMatch() {
@@ -62,7 +62,7 @@ export class RegisterComponent {
   }
 
   onRegister() {
-    const msg = `phone: ${this.phone} ` +
+    const msg = `phoneNumber: ${this.phoneNumber} ` +
       `password: ${this.password} ` +
       `retypePassword: ${this.retypePassword} ` +
       `fullName: ${this.fullName} ` +
@@ -75,7 +75,7 @@ export class RegisterComponent {
     const registerDTO: RegisterDTO =
     {
       "fullname": this.fullName,
-      "phone_number": this.phone,
+      "phone_number": this.phoneNumber,
       "address": this.address,
       "password": this.password,
       "retype_password": this.retypePassword,
