@@ -5,6 +5,7 @@ import com.project.shopapp.mappers.OrderMapper;
 import com.project.shopapp.models.Order;
 import com.project.shopapp.responses.OrderResponse;
 import com.project.shopapp.services.order.OrderService;
+import com.project.shopapp.utils.LocalizationUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,8 @@ public class OrderController {
 
     private final OrderService orderService;
     private final OrderMapper orderMapper;
+    private final LocalizationUtil localizationUtil;
+
 
     // Insert new Order
     @PostMapping("")

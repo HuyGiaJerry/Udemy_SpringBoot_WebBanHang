@@ -8,11 +8,13 @@ import com.project.shopapp.models.ProductImage;
 import com.project.shopapp.responses.ProductListResponse;
 import com.project.shopapp.responses.ProductResponse;
 import com.project.shopapp.services.product.ProductService;
+import com.project.shopapp.utils.LocalizationUtil;
 import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import net.datafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +39,9 @@ public class ProductController {
     private FileHelper fileHelper;
 
     private final ProductService productService;
+
+    private final LocalizationUtil localizationUtil;
+
 
     // Tất cả sản phẩm có phân trang (page, limit)
     @GetMapping("")
@@ -129,6 +135,32 @@ public class ProductController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/images/{imgName}")
+    public ResponseEntity<?> viewImages(
+            @PathVariable String imgName
+    ){
+        try{
+            java.nio.file.Path imgPath = Paths.get("uploads/"+imgName);
+            UrlResource resource = new UrlResource(imgPath.toUri());
+
+            if(resource.exists() ){
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG)
+                        .body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
+
+
+        } catch (Exception e){
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+
 
 
     // Cập nhật sản phẩm

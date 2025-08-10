@@ -2,21 +2,19 @@ package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.CategoryDTO;
 import com.project.shopapp.models.Category;
-import com.project.shopapp.responses.UpdateCategoryResponse;
+import com.project.shopapp.responses.CategoryResponse;
 import com.project.shopapp.services.category.CategoryService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.project.shopapp.utils.LocalizationUtil;
+import com.project.shopapp.utils.MessageKeys;
 import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.LocaleResolver;
 
 import java.util.List;
-import java.util.Locale;
 
 //@Validated
 // Dependency Injection
@@ -27,12 +25,11 @@ public class CategoryController {
 
     private final CategoryService categoryService;
     // Inject Component for Response and Language
-    private final MessageSource messageSource;
-    private final LocaleResolver localeResolver;
+    private final LocalizationUtil localizationUtil;
 
     // Thêm mới 1 category
     @PostMapping("")
-    public ResponseEntity<?> createCategory(
+    public ResponseEntity<CategoryResponse> createCategory(
             @Valid
             @RequestBody CategoryDTO categoryDTO,
             BindingResult bindingResult) {
@@ -41,10 +38,18 @@ public class CategoryController {
                     .stream()
                     .map(FieldError::getDefaultMessage)
                     .toList();
-            return ResponseEntity.badRequest().body(errorMessages);
+            return ResponseEntity.badRequest().body(CategoryResponse
+                    .builder()
+                    .message(localizationUtil.getLocalizedMessage(MessageKeys.INSERT_CATEGORY_FAILED, errorMessages.toString()))
+                    .build()
+            );
         }
         Category newCategory = categoryService.create(categoryDTO);
-        return ResponseEntity.ok("Insert category " + categoryDTO + " successfully");
+        return ResponseEntity.ok(CategoryResponse
+                .builder()
+                .message(localizationUtil.getLocalizedMessage(MessageKeys.INSERT_CATEGORY_SUCCESS))
+                .build()
+        );
     }
 
     // Hiển thị tất cả
@@ -56,26 +61,26 @@ public class CategoryController {
         return ResponseEntity.ok(categories);
     }
 
-
     @PutMapping("/{id}")
-    public ResponseEntity<UpdateCategoryResponse> updateCategories(
+    public ResponseEntity<CategoryResponse> updateCategories(
             @PathVariable Long id,
-            @Valid @RequestBody CategoryDTO categoryDTO,
-            HttpServletRequest request
-
+            @Valid @RequestBody CategoryDTO categoryDTO
     ) {
         Category updateCate = categoryService.update(id, categoryDTO);
-        Locale locale = localeResolver.resolveLocale(request);
-        return ResponseEntity.ok(UpdateCategoryResponse
+        return ResponseEntity.ok(CategoryResponse
                 .builder()
-                .message(messageSource.getMessage("category.update_category_update_successfully",null,locale))
+                .message(localizationUtil.getLocalizedMessage(MessageKeys.UPDATE_CATEGORY_SUCCESS))
                 .build()
         );
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteCategories(@PathVariable Long id) {
+    public ResponseEntity<CategoryResponse> deleteCategories(@PathVariable Long id) {
 
-        return ResponseEntity.ok("Delete category with id: " + id + " successfully");
+        return ResponseEntity.ok( CategoryResponse
+                .builder()
+                .message(localizationUtil.getLocalizedMessage(MessageKeys.DELETE_CATEGORY_SUCCESS, id.toString()))
+                .build()
+        );
     }
 }

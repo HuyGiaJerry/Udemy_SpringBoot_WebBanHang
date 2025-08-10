@@ -78,7 +78,6 @@ public class JwtToken {
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims =  this.extractAllClaims(token);
-
         return claimsResolver.apply(claims);
     }
 
@@ -86,7 +85,6 @@ public class JwtToken {
         Date expiration = extractClaim(token, Claims::getExpiration);
         return expiration.before(new Date());
     }
-
 
     public String extractPhoneNumber(String token) {
         return extractClaim(token, Claims::getSubject);

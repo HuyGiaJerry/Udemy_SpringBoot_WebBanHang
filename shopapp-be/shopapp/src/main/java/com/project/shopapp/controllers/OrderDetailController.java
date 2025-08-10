@@ -7,6 +7,7 @@ import com.project.shopapp.models.Order;
 import com.project.shopapp.models.OrderDetail;
 import com.project.shopapp.responses.OrderDetailResponse;
 import com.project.shopapp.services.orderDetail.OrderDetailService;
+import com.project.shopapp.utils.LocalizationUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,8 @@ public class OrderDetailController {
 
     private final OrderDetailService orderDetailService;
     private final OrderDetailMapper orderDetailMapper;
+    private final LocalizationUtil localizationUtil;
+
 
 
     // Create new Order Detail
