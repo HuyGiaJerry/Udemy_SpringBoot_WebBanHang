@@ -19,7 +19,7 @@ import {
 import { TokenInterceptor } from './interceptors/token.interceptor';
 
 const routes: Routes = [
-  { path: '', component: LoginComponent },
+  { path: '', component: HomeComponent },
   { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },

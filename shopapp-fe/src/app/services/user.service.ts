@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { RegisterDTO } from '../dtos/user/register.dto';
 import { LoginDTO } from '../dtos/user/login.dto';
-import { environment } from '../enviroments/enviroment'; // Adjust the import path as necessary
+import { environment } from '../environments/environment'; // Adjust the import path as necessary
 @Injectable({
   providedIn: 'root'
 })

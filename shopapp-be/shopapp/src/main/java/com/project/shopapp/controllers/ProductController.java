@@ -46,11 +46,15 @@ public class ProductController {
     // Tất cả sản phẩm có phân trang (page, limit)
     @GetMapping("")
     public ResponseEntity<ProductListResponse> getProducts(
-            @PathParam("page") int page,
-            @PathParam("limit") int limit) {
-        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createAt").descending());
-        int totalPage = productService.getAllProducts(pageRequest).getTotalPages();
-        List<ProductResponse> products = productService.getAllProducts(pageRequest).getContent();
+            @RequestParam(defaultValue = "") String keyword,
+            @RequestParam(defaultValue = "0",name= "category_id") Long categoryId ,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit
+    ) {
+        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("id").ascending());
+        //PageRequest.of(page, limit, Sort.by("createAt").descending());
+        int totalPage = productService.getAllProducts(keyword,categoryId,pageRequest).getTotalPages();
+        List<ProductResponse> products = productService.getAllProducts(keyword,categoryId,pageRequest).getContent();
 
         return ResponseEntity.ok(ProductListResponse.builder()
                 .products(products)
@@ -139,12 +143,12 @@ public class ProductController {
     @GetMapping("/images/{imgName}")
     public ResponseEntity<?> viewImages(
             @PathVariable String imgName
-    ){
-        try{
-            java.nio.file.Path imgPath = Paths.get("uploads/"+imgName);
+    ) {
+        try {
+            java.nio.file.Path imgPath = Paths.get("uploads/" + imgName);
             UrlResource resource = new UrlResource(imgPath.toUri());
 
-            if(resource.exists() ){
+            if (resource.exists()) {
                 return ResponseEntity.ok()
                         .contentType(MediaType.IMAGE_JPEG)
                         .body(resource);
@@ -153,14 +157,10 @@ public class ProductController {
             }
 
 
-
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
     }
-
-
-
 
 
     // Cập nhật sản phẩm
@@ -173,7 +173,7 @@ public class ProductController {
             Product updatedProduct = productService.updateProduct(id, productDTO);
             return ResponseEntity.ok(updatedProduct);
         } catch (Exception e) {
-           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
 
     }

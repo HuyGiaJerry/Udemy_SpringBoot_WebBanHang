@@ -11,6 +11,8 @@ import com.project.shopapp.repositories.OrderDetailRepository;
 import com.project.shopapp.repositories.OrderRepository;
 import com.project.shopapp.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
@@ -64,6 +66,14 @@ public class OrderDetailService extends BaseServiceImpl<OrderDetail, OrderDetail
         // Lưu lại orderDetail đã cập nhật
         return orderDetailRepository.save(existingOrderDetail);
     }
+
+    @Override
+    @Transactional
+    public void delete(Long id){
+        orderDetailRepository.deleteById(id);
+    }
+
+
 
     public List<OrderDetail> getOrderDetailsByOrderId(Long orderId) throws DataNotFoundException {
         // Kiểm tra có order theo orderId request gửi xuống ko ?

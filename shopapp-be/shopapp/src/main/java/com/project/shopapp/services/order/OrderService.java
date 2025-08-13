@@ -10,6 +10,7 @@ import com.project.shopapp.models.User;
 import com.project.shopapp.repositories.OrderRepository;
 import com.project.shopapp.repositories.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -56,6 +57,7 @@ public class OrderService extends BaseServiceImpl<Order, OrderDTO, Long> {
     }
 
     @Override
+    @Transactional
     public Order update(Long id, OrderDTO dto) throws DataNotFoundException {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Order not found with id: " + id));
@@ -69,16 +71,22 @@ public class OrderService extends BaseServiceImpl<Order, OrderDTO, Long> {
         return order;
     }
 
+    @Override
+    @Transactional
+    public void delete(Long id){
+        Order order = orderRepository.findById(id).orElse(null);
+        if(order!= null) {
+            order.setActive(false); // Đánh dấu là không hoạt động thay vì xóa cứng
+            orderRepository.save(order);
+        }
+    }
+
+
+
     public List<Order> getByUserId(Long userId){
         return orderRepository.findByUserId(userId);
     }
 
-    @Override
-    public void delete(Long id) throws DataNotFoundException {
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("Order not found with id: " + id));
-        order.setActive(false); // Thay vì xóa cứng, đánh dấu là không hoạt động
-        orderRepository.save(order);
-    }
+
 
 }

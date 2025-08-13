@@ -19,7 +19,7 @@ public class ProductResponse extends BaseResponse {
     private String name;
     private float price;
     private String description;
-    private String thumbnail;
+    private String thumpnail;
     private Long categoryId;
 
     public static ProductResponse convertProductToResponse(Product product) {
@@ -27,7 +27,7 @@ public class ProductResponse extends BaseResponse {
                 .builder()
                 .name(product.getName())
                 .price(product.getPrice())
-                .thumbnail(product.getThumpnail())
+                .thumpnail(product.getThumpnail())
                 .description(product.getDescription())
                 .categoryId(product.getCategory().getId())
                 .build();

@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -60,15 +61,18 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Page<ProductResponse> getAllProducts(PageRequest pageRequest) {
+    public Page<ProductResponse> getAllProducts(
+            String keyword,
+            Long categoryId,
+            PageRequest pageRequest) {
         // Lấy ra danh sách sản phẩm với phân trang(page , limit)
-
-        return productRepository
-                .findAll(pageRequest)
-                .map(ProductResponse::convertProductToResponse);
+        Page<Product> productPage;
+        productPage = productRepository.searchProducts(keyword, categoryId, pageRequest);
+        return productPage.map(ProductResponse::convertProductToResponse);
     }
 
     @Override
+    @Transactional
     public Product updateProduct(Long id, ProductDTO productDTO) {
         try {
             Product existingProduct = getProductById(id);

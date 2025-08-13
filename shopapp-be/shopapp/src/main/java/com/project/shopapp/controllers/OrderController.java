@@ -92,12 +92,8 @@ public class OrderController {
             @Valid @PathVariable Long id
     ){
         // Xóa mềm qua trường active
-        try {
             orderService.delete(id);
             return ResponseEntity.ok().body("Delete Order "+id+" successful");
-        } catch (DataNotFoundException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
     }
 
 }
