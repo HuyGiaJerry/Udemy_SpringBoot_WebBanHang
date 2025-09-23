@@ -1,6 +1,7 @@
 package com.project.shopapp.services.product;
 
 import com.project.shopapp.dtos.ProductDTO;
+import com.project.shopapp.dtos.ProductDetailDTO;
 import com.project.shopapp.dtos.ProductImageDTO;
 import com.project.shopapp.exceptions.DataNotFoundException;
 import com.project.shopapp.exceptions.InvalidParamException;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -51,7 +53,24 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Product getProductById(Long id) {
+    public ProductDetailDTO getProductById(Long id) {
+        try {
+            Product product =  productRepository.findById(id)
+                    .orElseThrow(() -> new DataNotFoundException("Product not found with id: " + id));
+            List<ProductImageDTO> imageDtos = product.getProductImages().stream().map(img -> new ProductImageDTO(img.getProduct().getId(),img.getImageUrl())).toList();
+            return ProductDetailDTO.builder()
+                    .name(product.getName())
+                    .price(product.getPrice())
+                    .thumbnail(product.getThumpnail())
+                    .description(product.getDescription())
+                    .productImages(imageDtos)
+                    .build();
+        } catch (DataNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Product getProductEntityById(Long id) {
         try {
             return productRepository.findById(id)
                     .orElseThrow(() -> new DataNotFoundException("Product not found with id: " + id));
@@ -59,6 +78,7 @@ public class ProductService implements IProductService {
             throw new RuntimeException(e);
         }
     }
+
 
     @Override
     public Page<ProductResponse> getAllProducts(
@@ -75,7 +95,7 @@ public class ProductService implements IProductService {
     @Transactional
     public Product updateProduct(Long id, ProductDTO productDTO) {
         try {
-            Product existingProduct = getProductById(id);
+            Product existingProduct = getProductEntityById(id);
             if (existingProduct != null) {
                 // Copy các trường từ productDTO vào existingProduct
 
@@ -102,6 +122,11 @@ public class ProductService implements IProductService {
     public void deleteProduct(Long id) {
         Optional<Product> optionalProduct = productRepository.findById(id);
         optionalProduct.ifPresent(productRepository::delete);
+    }
+
+    @Override
+    public List<Product> findProductsByIds(List<Long> productIds) {
+        return productRepository.findProductsByIds(productIds);
     }
 
     @Override

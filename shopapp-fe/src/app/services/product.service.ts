@@ -13,11 +13,25 @@ export class ProductService {
 
     constructor(private http: HttpClient) { }
 
-    getProducts(page: number, limit: number): Observable<Product[]> {
+    getProducts(keyword: string, category_id: number, page: number, limit: number): Observable<Product[]> {
         const params = new HttpParams()
             .set("page", page.toString())
-            .set("limit", limit.toString());
-
+            .set("limit", limit.toString())
+            .set("keyword", keyword)
+            .set("category_id", category_id);
         return this.http.get<Product[]>(this.apiGetProducts, { params });
     }
+
+    getDetailProduct(productId: number){
+        return this.http.get(`${environment.apiUrl}/products/${productId}`);
+    }
+
+    getProductsByIds(productIds: number[]): Observable<Product[]> {
+        debugger
+        const params = new HttpParams().set("ids", productIds.join(","));
+        return this.http.get<Product[]>(`${this.apiGetProducts}/by-ids`, { params });
+    }
+
 }
+
+

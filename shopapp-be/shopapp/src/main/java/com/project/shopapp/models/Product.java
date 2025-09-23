@@ -4,6 +4,8 @@ import com.project.shopapp.helpers.models.BaseModel;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "products")
 @Data
@@ -31,4 +33,10 @@ public class Product extends BaseModel {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProductImage> productImages;
+
+
 }

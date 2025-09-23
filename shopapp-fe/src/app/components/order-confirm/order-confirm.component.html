@@ -12,52 +12,36 @@
                     <th scope="col">Số lượng</th>
                     <th scope="col">Đơn giá</th>
                     <th scope="col">Tổng giá</th>
-                  </tr>
+                </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>
-                        <div class="product-info">
-                            <img 
-                            src="https://images.pexels.com/photos/389819/pexels-photo-389819.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                            alt="Product Image" class="product-image">
-                            <span class="product-name">iphone 13</span>
-                        </div>
-                    </td>
-                    <td>2</td>
-                    <td>100,000 đ</td>
-                    <td>200,000 đ</td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="product-info">
-                            <img 
-                            src="https://images.pexels.com/photos/389819/pexels-photo-389819.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                            alt="Product Image" class="product-image">
-                            <span class="product-name">Macbook pro M2 2023</span>
-                        </div>
-                    </td>
-                    <td>2</td>
-                    <td>100,000 đ</td>
-                    <td>200,000 đ</td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="product-info">
-                            <img 
-                            src="https://images.pexels.com/photos/389819/pexels-photo-389819.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                            alt="Product Image" class="product-image">
-                            <span class="product-name">Apple Vision Pro 2023</span>
-                        </div>
-                    </td>
-                    <td>2</td>
-                    <td>100,000 đ</td>
-                    <td>200,000 đ</td>
-                </tr>
+                <ng-container *ngFor="let item of cartItems">
+                    <tr>
+                        <td class="product-info">
+
+                                <img [src]="item.product.thumpnail" alt="Product Image" class="product-image">
+                                <span class="product-name">{{ item.product.name }}</span>
+                        </td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.product.price | currency:'VND':'symbol':'1.0-0' }}</td>
+                        <td>{{ (item.product.price * item.quantity) | currency:'VND':'symbol':'1.0-0' }}</td>
+                    </tr>
+                </ng-container>
+                
             </tbody>
         </table>   
+
+        <div class="input-group mb-3 mt-3 col-6">
+            <input type="text" class="form-control" placeholder="Mã giảm giá" [(ngModel)]="couponCode">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" (click)="applyCoupon()">Áp dụng</button>
+            </div>
+        </div>
+
+        <p class="mt-3">Tổng tiền: {{ totalAmount | currency:'VND':'symbol':'1.0-0' }}</p>
+
         <div class="text-center mt-3">
-           <button class="btn btn-gradient" type="button">Tiếp tục mua sắm</button>
+            <button class="btn btn-gradient" type="button">Đặt hàng</button>
         </div> 
     </div>    
 </div>

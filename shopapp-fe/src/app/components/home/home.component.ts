@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { environment } from 'src/app/environments/environment';
 import { Product } from 'src/app/models/product';
+import { Category } from 'src/app/models/category';
 import { ProductService } from 'src/app/services/product.service';
+import { CategoryService } from 'src/app/services/category.service';
 @Component({
   selector: 'app-home',
 
@@ -13,25 +15,52 @@ export class HomeComponent implements OnInit {
 
   products: Product[] = [];
   currentPage: number = 0;
+  categories: Category[] = [];
   itemsPerPage: number = 9;
   pages: number[] = [];
   totalPages: number = 0;
   visiblePages: number[] = [];
+  keyword: string = '';
+  selectedCategoryId: number = 0;
 
-  constructor(private productService: ProductService) { }
+  constructor(private productService: ProductService,private categoryService: CategoryService) { }
 
   ngOnInit(): void {
-    this.getAllProducts(this.currentPage, this.itemsPerPage);
+    this.getAllProducts(this.keyword,this.selectedCategoryId,this.currentPage, this.itemsPerPage);
+    this.getCategories(1,100);
+  }
+
+  getCategories(page: number , limit: number) {
+    this.categoryService.getCategories(page, limit).subscribe(
+      {
+        next: (categories: Category[]) => {
+          debugger
+          this.categories = categories;
+        },
+        complete: () => {
+          debugger;
+        },
+        error: (error: any) => {
+          console.error('Error fetching categories:', error);
+        }
+      });
+  }
+
+  searchProducts(){
+    this.currentPage = 0;
+    this.itemsPerPage = 9;
+    debugger
+    this.getAllProducts(this.keyword,this.selectedCategoryId,this.currentPage, this.itemsPerPage);
   }
 
 
-  getAllProducts(page: number, limit: number) {
-    this.productService.getProducts(page, limit).subscribe(
+  getAllProducts(keyword: string, category_id: number, page: number, limit: number) {
+    this.productService.getProducts(keyword, category_id, page, limit).subscribe(
       {
         next: (response: any) => {
           debugger
           response.products.forEach((product: Product) => {
-            debugger
+            
             product.url = `${environment.apiUrl}/products/images/${product.thumpnail}`;
           });
           this.products = response.products;
@@ -48,10 +77,15 @@ export class HomeComponent implements OnInit {
       });
   }
 
+  
+
+
+
+
   onPageChange(page: number) {
     debugger
     this.currentPage = page;
-    this.getAllProducts(this.currentPage, this.itemsPerPage);
+    this.getAllProducts(this.keyword,this.selectedCategoryId,this.currentPage, this.itemsPerPage);
   }
 
   generateVisiblePageArray(currentPage: number, totalPages: number): number[] {

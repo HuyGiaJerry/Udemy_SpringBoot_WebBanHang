@@ -1,6 +1,7 @@
 package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.ProductDTO;
+import com.project.shopapp.dtos.ProductDetailDTO;
 import com.project.shopapp.dtos.ProductImageDTO;
 import com.project.shopapp.helpers.file.FileHelper;
 import com.project.shopapp.models.Product;
@@ -28,7 +29,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -51,6 +54,8 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit
     ) {
+
+        // Tạo pageable từ thông tin trang và giới hạn
         PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("id").ascending());
         //PageRequest.of(page, limit, Sort.by("createAt").descending());
         int totalPage = productService.getAllProducts(keyword,categoryId,pageRequest).getTotalPages();
@@ -66,8 +71,8 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getProductById(@PathVariable long id) {
         try {
-            Product existingProduct = productService.getProductById(id);
-            return ResponseEntity.ok(ProductResponse.convertProductToResponse(existingProduct));
+
+            return ResponseEntity.ok(productService.getProductById(id));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -101,7 +106,7 @@ public class ProductController {
     ) {
 
         try {
-            Product existingProduct = productService.getProductById(productId);
+            Product existingProduct = productService.getProductEntityById(productId);
             List<ProductImage> productImages = new ArrayList<>();
             // Kiểm tra đầu vào không đc vượt quá 5 images
             if (files.size() > ProductImage.MAX_IMAGES_PER_PRODUCT) {
@@ -153,7 +158,10 @@ public class ProductController {
                         .contentType(MediaType.IMAGE_JPEG)
                         .body(resource);
             } else {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG)
+                        .body(new UrlResource(Paths.get("uploads/not_found_img.jpg").toUri()));
+                // return ResponseEntity.notFound().build();
             }
 
 
@@ -184,6 +192,22 @@ public class ProductController {
         productService.deleteProduct(id);
         return ResponseEntity.ok("Delete Product " + id + " successfully!");
     }
+
+    @GetMapping("/by-ids")
+    public ResponseEntity<?> getProductsByIds(@RequestParam("ids") String ids) {
+        try {
+            // Tách chuỗi ids thành danh sách mảng số nguyên
+            List<Long> productIds = Arrays.stream(ids.split(","))
+                    .map(Long::parseLong)
+                    .collect(Collectors.toList());
+            List<Product> products = productService.findProductsByIds(productIds);
+            return ResponseEntity.ok(products);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+
 
     // @PostMapping("/generateFakeDataProducts")
     private ResponseEntity<String> generateFakeDataProducts() {

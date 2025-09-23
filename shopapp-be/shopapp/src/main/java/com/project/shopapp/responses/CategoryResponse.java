@@ -11,5 +11,6 @@ import lombok.*;
 public class CategoryResponse {
     @JsonProperty("message")
     private String message;
-
+    private Long id;
+    private String name;
 }
