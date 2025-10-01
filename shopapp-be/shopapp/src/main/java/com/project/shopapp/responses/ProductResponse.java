@@ -20,6 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ProductResponse extends BaseResponse {
+    private Long id;
     private String name;
     private float price;
     private String description;
@@ -31,6 +32,7 @@ public class ProductResponse extends BaseResponse {
     public static ProductResponse convertProductToResponse(Product product) {
         ProductResponse productResponse = ProductResponse
                 .builder()
+                .id(product.getId())
                 .name(product.getName())
                 .price(product.getPrice())
                 .thumpnail(product.getThumpnail())

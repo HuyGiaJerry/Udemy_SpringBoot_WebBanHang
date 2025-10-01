@@ -73,7 +73,11 @@ public class UserController {
     ) {
         try {
             // Kiểm tra thông tin đăng nhập
-            String token = userService.login(userLoginDTO.getPhoneNumber(), userLoginDTO.getPassword(), userLoginDTO.getRoleId());
+            String token = userService.login(
+                    userLoginDTO.getPhoneNumber(),
+                    userLoginDTO.getPassword(),
+                    userLoginDTO.getRoleId() == null ? 1 : userLoginDTO.getRoleId()
+            );
 
             //  Trả về dạng json : token , message
             return ResponseEntity.ok().body(LoginResponse

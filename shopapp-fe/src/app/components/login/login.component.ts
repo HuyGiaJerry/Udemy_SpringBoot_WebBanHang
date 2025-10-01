@@ -6,7 +6,7 @@ import { NgForm } from '@angular/forms';
 import { LoginResponse } from '../../responses/user/login.responses';
 import { TokenService } from '../../services/token.service';
 import { RoleService } from 'src/app/services/role.service';
-import {Role} from '../../models/role';
+import { Role } from '../../models/role';
 
 
 
@@ -19,32 +19,29 @@ import {Role} from '../../models/role';
 export class LoginComponent {
   @ViewChild('loginForm') loginForm!: NgForm;
 
-  phoneNumber: string;
-  password: string;
+  phoneNumber: string = '11223344';
+  password: string = '11223344';
   roles: Role[] = [];
   selectedRole: number | undefined;
-  remember: boolean = false; 
+  remember: boolean = true;
 
   constructor(
     private router: Router,
     private userService: UserService,
     private tokenService: TokenService,
     private roleService: RoleService
-  ) {
-    this.phoneNumber = '';
-    this.password = '';
-  }
+  ) {}
 
   ngOnInit() {
-    
+
     this.roleService.getRoles().subscribe({
       next: (roles: Role[]) => {
-        
+
         this.roles = roles;
         this.selectedRole = roles.length > 0 ? roles[0].id : undefined; // Chọn quyền đầu tiên làm mặc định
       },
       error: (error: any) => {
-        
+
         console.error('Error fetching roles:', error);
       }
     });
@@ -56,7 +53,7 @@ export class LoginComponent {
 
   onLogin() {
     debugger
-    if(!this.selectedRole) {
+    if (!this.selectedRole) {
       alert('Vui lòng chọn quyền đăng nhập');
       return;
     }
@@ -72,11 +69,11 @@ export class LoginComponent {
         debugger
         // Đăng nhập thành công 
         // Lưu token 
-        if(this.remember) {
-          const {token} = response;
+        if (this.remember) {
+          const { token } = response;
           this.tokenService.setToken(token);
         }
-        
+
       },
       complete: () => {
         debugger

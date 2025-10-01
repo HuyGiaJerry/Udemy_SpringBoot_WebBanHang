@@ -1,6 +1,5 @@
 package com.project.shopapp.controllers;
 import com.project.shopapp.dtos.OrderDTO;
-import com.project.shopapp.exceptions.DataNotFoundException;
 import com.project.shopapp.mappers.OrderMapper;
 import com.project.shopapp.models.Order;
 import com.project.shopapp.responses.OrderResponse;
@@ -68,7 +67,7 @@ public class OrderController {
             @Valid @PathVariable("id") Long id) {
         try {
             Order existingOrder =  orderService.getById(id);
-            return ResponseEntity.ok().body(existingOrder);
+            return ResponseEntity.ok().body(OrderResponse.fromOrder(existingOrder));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

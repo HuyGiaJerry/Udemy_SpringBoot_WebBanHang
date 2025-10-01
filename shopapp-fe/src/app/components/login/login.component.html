@@ -11,8 +11,8 @@
                             (input)="onChangePhoneNumber()" required (focus)="loginForm.form.markAsTouched()"
                             id="phoneNumber">
                         <div class="divider-nospace"></div>
-                        <p class="text-danger" *ngIf="phoneNumber.length < 10 && loginForm.form.touched">Số điện thoại
-                            phải có ít nhất 10 ký tự
+                        <p class="text-danger" *ngIf="phoneNumber.length < 6 && loginForm.form.touched">Số điện thoại
+                            phải có ít nhất 6 ký tự
                         </p>
                     </div>
                     <div class="mt-5"></div>

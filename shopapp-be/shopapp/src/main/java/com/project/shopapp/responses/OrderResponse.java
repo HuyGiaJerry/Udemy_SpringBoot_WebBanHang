@@ -1,13 +1,15 @@
 package com.project.shopapp.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.shopapp.helpers.responses.BaseResponse;
+import com.project.shopapp.models.Order;
+import com.project.shopapp.models.OrderDetail;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @Builder
@@ -35,11 +37,29 @@ public class OrderResponse  {
     private String shippingAddress;
     @JsonProperty("shipping_date")
     private Date shippingDate;
-    @JsonProperty("tracking_number")
-    private String trackingNumber;
     @JsonProperty("payment_method")
     private String paymentMethod;
-    @JsonProperty("active")
-    private Boolean active;
+    @JsonProperty("order_details")
+    private List<OrderDetail> orderDetails;
+
+    public static OrderResponse fromOrder(Order order) {
+        return OrderResponse
+                .builder()
+                .id(order.getId())
+                .userId(order.getId())
+                .fullName(order.getFullName())
+                .email(order.getEmail())
+                .address(order.getAddress())
+                .phoneNumber(order.getPhoneNumber())
+                .status(order.getStatus())
+                .total(order.getTotal())
+                .shippingMethod(order.getShippingMethod())
+                .shippingAddress(order.getShippingAddress())
+                .paymentMethod(order.getPaymentMethod())
+                .note(order.getNote())
+                .orderDetails(order.getOrderDetails())
+                .build();
+
+    }
 
 }
