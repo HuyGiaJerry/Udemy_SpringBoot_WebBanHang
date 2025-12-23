@@ -93,4 +93,19 @@ public class UserService implements IUserService {
 
         return jwtToken.generateToken(existingUser);
     }
+
+    @Override
+    public User getUserDetailFromToken(String token) throws Exception {
+        if(jwtToken.isTokenExpired(token)) {
+            throw new Exception("Token expired");
+        }
+        String phoneNumber = jwtToken.extractPhoneNumber(token);
+        Optional<User> user = userRepository.findByPhoneNumber(phoneNumber);
+
+        if(user.isPresent()) {
+            return user.get();
+        } else {
+            throw new DataNotFoundException("User not found");
+        }
+    }
 }

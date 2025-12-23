@@ -3,8 +3,8 @@
         <div class="container">
             <a class="navbar-brand" href="#">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="50" height="50">
-                    <circle cx="50" cy="50" r="45" fill="rgb(240, 101, 197)"/>
-                    <circle cx="50" cy="50" r="35" fill="rgb(127, 68, 255)"/>
+                    <circle cx="50" cy="50" r="45" fill="rgb(240, 101, 197)" />
+                    <circle cx="50" cy="50" r="35" fill="rgb(127, 68, 255)" />
                 </svg>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -12,21 +12,56 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav w-100">
                     <li class="nav-item">
-                        <a class="nav-link active" routerLink="/">Trang chủ</a>
+                        <a class="nav-link" routerLink="/" routerLinkActive="active"
+                            [routerLinkActiveOptions]="{exact: true}">Trang chủ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" routerLink="/">Thông báo</a>
+                        <a class="nav-link" routerLink="/notifications" routerLinkActive="active"
+                            [routerLinkActiveOptions]="{ exact: true }">Thông báo</a>
+
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" routerLink="/orders">
+                    <li class="nav-item ">
+                        <a class="nav-link" routerLink="/orders" routerLinkActive="active">
+
                             <i class="fas fa-shopping-cart icon"></i>
                             Giỏ hàng
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" routerLink="/login">Đăng nhập</a>
+                    <li class="nav-item ms-auto">
+                        <ng-container *ngIf="userResponse">
+                            <ng-container 
+                            ngbPopover="Tài khoản của tôi<br>Đơn mua<br>Đăng xuất"
+                            popoverTitle="User Actions"
+                            [placement]="'bottom'"
+                            >
+                                <a class="nav-link"
+                                routerLink="/profile"
+                                [ngbPopover]="popoverContent"
+                                (click)="tooglePopover($event)"
+                                >
+                                    Xin chào: {{ userResponse.fullname }} !
+                                </a>
+
+                                <ng-template #popoverContent>
+                                    <div class="popover-list">
+                                        <a href="#" class="popover-item" (click)="handleItemClick(0)">Tài khoản của tôi</a>
+                                        <a href="#" class="popover-item" (click)="handleItemClick(1)">Đơn mua</a>
+                                        <a href="#" class="popover-item text-danger" (click)="handleItemClick(2)">Đăng xuất</a>
+                                    </div>
+                                </ng-template>
+                            
+                            </ng-container>
+
+
+                        </ng-container>
+
+                        
+                        <ng-container *ngIf="!userResponse">
+                            <a class="nav-link" routerLink="/login" routerLinkActive="active">
+                                Đăng nhập</a>
+                        </ng-container> 
                     </li>
                 </ul>
             </div>

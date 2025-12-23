@@ -20,7 +20,7 @@ export class OrderDTO {
 
     note: string;
 
-    total_price: number;
+    total: number;
 
     payment_method: string;
 
@@ -37,7 +37,7 @@ export class OrderDTO {
         this.phone_number = data.phone_number;
         this.address = data.address;
         this.note = data.note;
-        this.total_price = data.total_price;
+        this.total = data.total;
         this.payment_method = data.payment_method;
         this.shipping_method = data.shipping_method;
         this.coupon_code = data.coupon_code;

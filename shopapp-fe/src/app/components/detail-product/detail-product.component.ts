@@ -117,6 +117,8 @@ export class DetailProductComponent implements OnInit {
   }
 
   buyNow(): void {
+    debugger
+    this.cartService.addCart(this.productId, this.quantity);
     this.router.navigate(['/orders']);
   }
 

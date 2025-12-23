@@ -1,4 +1,4 @@
---CREATE BY JerryNguyen
+-- CREATE BY JerryNguyen
 -- Date: 01/07/2025
 CREATE DATABASE IF NOT EXISTS udemy_shopapp;
 USE udemy_shopapp;
@@ -59,7 +59,7 @@ CREATE TABLE categories (
 CREATE TABLE products (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(300) NOT NULL,
-    description LONGTEXT DEFAULT '',
+    description LONGTEXT ,
     price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
     category_id INT,
     thumpnail VARCHAR(300) DEFAULT '',
@@ -78,12 +78,12 @@ CREATE TABLE product_images (
 );
 
 -- Orders 
-CREATE TABLE orders (
+CREATE TABLE orders (users
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
     fullname VARCHAR(100) DEFAULT '',
     email VARCHAR(100) DEFAULT '',
-    phone_number VARCHAR(20) NOT NULL,
+    phone_number VARCHAR(20) NOT NULL,users
     address VARCHAR(200) NOT NULL,
     note VARCHAR(100) DEFAULT '',
     order_date DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -92,7 +92,7 @@ CREATE TABLE orders (
     shipping_method VARCHAR(100),
     shipping_address VARCHAR(200),
     shipping_date DATE,
-    tracking_number VARCHAR(100),
+    tracking_ncategoriesumber VARCHAR(100),
     payment_method VARCHAR(100),
     active TINYINT(1),
     FOREIGN KEY (user_id) REFERENCES users(id)
@@ -100,7 +100,7 @@ CREATE TABLE orders (
 
 -- Order details 
 CREATE TABLE order_details (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT PRIMARY KEY AUTO_INCREMENT,users
     order_id INT,
     product_id INT,
     quantity INT NOT NULL CHECK (quantity > 0),
@@ -110,3 +110,6 @@ CREATE TABLE order_details (
     FOREIGN KEY (order_id) REFERENCES orders(id),
     FOREIGN KEY (product_id) REFERENCES products(id)
 );
+
+
+users

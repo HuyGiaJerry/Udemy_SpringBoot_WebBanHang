@@ -6,6 +6,7 @@ import { OrderComponent } from './components/order/order.component';
 import { OrderDetailComponent } from './components/order-detail/order-detail.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
+import { AuthGuardFn } from './components/guards/auth.guard';
 
 const routes: Routes = [
     { path: '', component: HomeComponent }, // <-- Sửa thành HomeComponent
@@ -13,8 +14,8 @@ const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'products/:id', component: DetailProductComponent },
-    { path: 'orders', component: OrderComponent },
-    { path: 'orders/:id', component: OrderDetailComponent }
+    { path: 'orders', component: OrderComponent , canActivate: [AuthGuardFn]},
+    { path: 'orders/:id', component: OrderDetailComponent , canActivate: [AuthGuardFn]}
     
 ];
 
