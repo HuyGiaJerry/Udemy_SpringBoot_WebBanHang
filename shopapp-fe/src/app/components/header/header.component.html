@@ -31,37 +31,30 @@
                     </li>
                     <li class="nav-item ms-auto">
                         <ng-container *ngIf="userResponse">
-                            <ng-container 
-                            ngbPopover="Tài khoản của tôi<br>Đơn mua<br>Đăng xuất"
-                            popoverTitle="User Actions"
-                            [placement]="'bottom'"
-                            >
-                                <a class="nav-link"
-                                routerLink="/profile"
-                                [ngbPopover]="popoverContent"
-                                (click)="tooglePopover($event)"
-                                >
+                            <ng-container ngbPopover="Tài khoản của tôi<br>Đơn mua<br>Đăng xuất"
+                                popoverTitle="User Actions" [placement]="'bottom'">
+                                <a class="nav-link" [ngbPopover]="popoverContent" (click)="tooglePopover($event)">
                                     Xin chào: {{ userResponse.fullname }} !
                                 </a>
 
                                 <ng-template #popoverContent>
                                     <div class="popover-list">
-                                        <a href="#" class="popover-item" (click)="handleItemClick(0)">Tài khoản của tôi</a>
-                                        <a href="#" class="popover-item" (click)="handleItemClick(1)">Đơn mua</a>
-                                        <a href="#" class="popover-item text-danger" (click)="handleItemClick(2)">Đăng xuất</a>
+                                        <a class="popover-item" (click)="handleItemClick(0)">Tài khoản của tôi</a>
+                                        <a class="popover-item" (click)="handleItemClick(1)">Đơn mua</a>
+                                        <a class="popover-item text-danger" (click)="handleItemClick(2)">Đăng xuất</a>
                                     </div>
                                 </ng-template>
-                            
+
                             </ng-container>
 
 
                         </ng-container>
 
-                        
+
                         <ng-container *ngIf="!userResponse">
                             <a class="nav-link" routerLink="/login" routerLinkActive="active">
                                 Đăng nhập</a>
-                        </ng-container> 
+                        </ng-container>
                     </li>
                 </ul>
             </div>

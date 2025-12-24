@@ -1,9 +1,10 @@
 <app-header></app-header>
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 offset-md-3">
-            <div class="login-form mx-auto">
-                <form #loginForm="ngForm">
+<form #loginForm="ngForm" (ngSubmit)="onLogin()">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="login-form mx-auto">
+
                     <h2 class="login-header">Đăng nhập</h2>
                     <div class="form-group">
                         <label for="phoneNumber">Phone Number</label>
@@ -11,23 +12,26 @@
                             (input)="onChangePhoneNumber()" required (focus)="loginForm.form.markAsTouched()"
                             id="phoneNumber">
                         <div class="divider-nospace"></div>
-                        <p class="text-danger" *ngIf="phoneNumber.length < 6 && loginForm.form.touched">Số điện thoại
+                        <p class="text-danger" *ngIf="phoneNumber.length < 6 && loginForm.form.touched">Số điện
+                            thoại
                             phải có ít nhất 6 ký tự
                         </p>
                     </div>
                     <div class="mt-5"></div>
                     <div class="form-group password-field">
                         <label for="password">Mật khẩu</label>
-                        <input type="password" placeholder="Ít nhất 3 ký tự" class="form-control" required
-                            name="password" [(ngModel)]="password" (focus)="loginForm.form.markAsTouched()"
-                            id="password">
-                        <i class="password-toggle fas fa-eye-slash"></i>
+                        <input [type]="showPassword ? 'text' : 'password'" placeholder="Ít nhất 3 ký tự"
+                            class="form-control" required name="password" [(ngModel)]="password"
+                            (focus)="loginForm.form.markAsTouched()" id="password">
+                        <i class="password-toggle" [ngClass]="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
+                            (click)="toggleShowPassword()"
+                            style="cursor:pointer; position:absolute; right:20px; top:38px;"></i>
                         <div class="divider-nospace"></div>
                         <p class="text-danger" *ngIf="password.length < 3 && loginForm.form.touched">
                             Mật khẩu phải có ít nhất 3 ký tự
                         </p>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mt-5">
                         <div class="form-check checkbox-text">
                             <span style="display: flex;">
                                 <input type="checkbox" class="form-check-input" id="remember" [(ngModel)]="remember"
@@ -39,21 +43,21 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <select class="form-control access-right"
-                            [(ngModel)]="selectedRole"
-                            name="selectedRole"
+                        <select class="form-control access-right" [(ngModel)]="selectedRole" name="selectedRole"
                             required>
                             <option selected disabled [ngValue]="undefined">Quyền đăng nhập</option>
                             <option *ngFor="let role of roles" [ngValue]="role.id">{{ role.name }}</option>
 
                         </select>
                     </div>
-                    <button type="button" (click)="onLogin()" class="login-button">Đăng nhập</button>
+                    <button type="submit" class="login-button" [disabled]="!loginForm.form.valid">Đăng nhập</button>
                     <div class="divider"></div>
                     <p class="text-center">Bạn chưa đăng ký? <span>
-                            <a href="#" class="register-link">Tạo tài khoản</a></span></p>
-                </form>
+                            <a routerLink="/register" class="register-link">Tạo tài khoản</a></span></p>
+
+                </div>
             </div>
         </div>
     </div>
-    <app-footer></app-footer>
+</form>
+<app-footer></app-footer>

@@ -5,6 +5,7 @@ import { RegisterDTO } from '../dtos/user/register.dto';
 import { LoginDTO } from '../dtos/user/login.dto';
 import { environment } from '../environments/environment'; // Adjust the import path as necessary
 import { UserResponse } from '../responses/user/user.response';
+import { UpdateUserDTO } from '../dtos/user/update.user.dto';
 @Injectable({
   providedIn: 'root'
 })
@@ -80,6 +81,17 @@ export class UserService {
     } catch (error) {
       console.error('Error removing user response:', error);
     }
+  }
+
+  updateUser(token: string, updateUserDTO: UpdateUserDTO): Observable<any> {
+    debugger
+    let userResponse = this.getUserResponseInLocalStorage();
+    return this.http.put(`${environment.apiUrl}/users/details/${userResponse?.id}`, updateUserDTO, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      })
+    });
   }
 
 

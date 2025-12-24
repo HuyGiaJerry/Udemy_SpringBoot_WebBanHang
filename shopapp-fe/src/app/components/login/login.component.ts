@@ -19,12 +19,13 @@ import { UserResponse } from '../../responses/user/user.response';
 export class LoginComponent implements OnInit {
   @ViewChild('loginForm') loginForm!: NgForm;
 
-  phoneNumber: string = '11223344';
-  password: string = '11223344';
+  phoneNumber: string = '';
+  password: string = '';
   roles: Role[] = [];
   selectedRole: number | undefined;
   remember: boolean = true;
   userResponse?: UserResponse;
+  showPassword: boolean = false;
 
   constructor(
     private router: Router,
@@ -50,6 +51,10 @@ export class LoginComponent implements OnInit {
 
   onChangePhoneNumber() {
     console.log(`Phone number changed: ${this.phoneNumber}`);
+  }
+
+  toggleShowPassword(){
+    this.showPassword = !this.showPassword;
   }
 
   onLogin() {

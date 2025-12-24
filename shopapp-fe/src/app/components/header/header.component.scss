@@ -1,3 +1,5 @@
+@import '../../styles/shared-style.scss';
+
 header {
     background-color: rgba(0, 0, 0, 0);
     color: rgb(173, 178, 203);
@@ -11,19 +13,22 @@ header {
     background-color: rgba(0, 0, 0, 0) !important;
 }
 
-.navbar .container .navbar-brand {
-    color: rgb(173, 178, 203);
-}
-
 .navbar .container .navbar-nav .nav-link {
     color: rgb(173, 178, 203);
     border-radius: 18px;
     padding: 8px 16px;
 }
 
+.nav-link:hover {
+    background-color: $shopapp-color !important;
+    color: white !important;
+    cursor: pointer;
+    transition: 100ms;
+}
+
 
 .navbar .container .navbar-nav .nav-link.active {
-    background-color: rgb(127, 68, 255) !important;
+    background-color: $shopapp-color !important;
     color: white !important;
 }
 
@@ -33,9 +38,12 @@ header {
 
 .popover-item {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
+    padding: 5px 15px;
     text-decoration: none;
-    color: #333;
+    color: #000;
+    text-align: center;
+    border-radius: 8px;
 }
 
 .popover-item.text-danger {
@@ -44,6 +52,6 @@ header {
 
 .popover-item:hover {
     background-color: #f0f0f0;
-    color: #746;
+    color: $shopapp-color;
     cursor: pointer;
 }

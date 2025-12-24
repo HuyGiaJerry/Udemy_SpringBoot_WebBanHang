@@ -37,6 +37,7 @@ public class OrderService extends BaseServiceImpl<Order, OrderDTO, Long> {
     }
 
     @Override
+    @Transactional
     public Order create(OrderDTO orderDTO) throws DataNotFoundException {
 
             User user = userRepository.

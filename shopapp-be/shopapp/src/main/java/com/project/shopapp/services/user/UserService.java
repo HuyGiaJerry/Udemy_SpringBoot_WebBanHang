@@ -1,6 +1,7 @@
 package com.project.shopapp.services.user;
 
 import com.project.shopapp.dtos.UserDTO;
+import com.project.shopapp.dtos.UserUpdateDTO;
 import com.project.shopapp.exceptions.DataNotFoundException;
 import com.project.shopapp.exceptions.PermissionDenyException;
 import com.project.shopapp.models.Role;
@@ -17,6 +18,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -108,4 +110,52 @@ public class UserService implements IUserService {
             throw new DataNotFoundException("User not found");
         }
     }
+
+    @Transactional
+    @Override
+    public User updateUser(Long userId, UserUpdateDTO updateUserDTO) throws  Exception {
+        // Tìm user theo userId
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("User không tồn tại trong hệ thống"));
+
+        // Kiểm tra phone number có bị trùng không
+        String newPhone = updateUserDTO.getPhoneNumber();
+        if(!existingUser.getPhoneNumber().equals(newPhone) && userRepository.existsByPhoneNumber(newPhone)) {
+            throw new DataIntegrityViolationException("Số điện thoại đã tồn tại trong hệ thống");
+        }
+
+
+        // Cập nhật các trường thông tin
+        if(updateUserDTO.getFullName() != null) {
+            existingUser.setFullName(updateUserDTO.getFullName());
+        }
+        if(updateUserDTO.getPhoneNumber() != null) {
+            existingUser.setPhoneNumber(updateUserDTO.getPhoneNumber());
+        }
+        if(updateUserDTO.getAddress() != null) {
+            existingUser.setAddress(updateUserDTO.getAddress());
+        }
+        if(updateUserDTO.getDateOfBirth() != null) {
+            existingUser.setDateOfBirth(updateUserDTO.getDateOfBirth());
+        }
+        if(updateUserDTO.getFacebookId() != null && updateUserDTO.getFacebookId() > 0 ) {
+            existingUser.setFacebookId(updateUserDTO.getFacebookId());
+        }
+        if( updateUserDTO.getGoogleId() != null && updateUserDTO.getGoogleId() > 0 ) {
+            existingUser.setGoogleId(updateUserDTO.getGoogleId());
+        }
+        // Cập nhật mật khẩu nếu có thay đổi
+        if(updateUserDTO.getPassword() != null && !updateUserDTO.getPassword().isEmpty()) {
+            if(!updateUserDTO.getPassword().equals(updateUserDTO.getRetypePassword())) {
+                throw  new DataNotFoundException("Password and RetypePassword not match");
+            }
+            String newPassword = updateUserDTO.getPassword();
+            String encodedPassword = passwordEncoder.encode(newPassword);
+            existingUser.setPassword(encodedPassword);
+        }
+
+        return userRepository.save(existingUser);
+
+    }
+
 }
