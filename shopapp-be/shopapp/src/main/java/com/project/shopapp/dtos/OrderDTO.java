@@ -41,6 +41,9 @@ public class OrderDTO {
     @JsonProperty("payment_method")
     private String paymentMethod;
 
+
+    private String status;
+
     @JsonProperty("cart_items")
     private List<CartItemDTO> cartItems;
 

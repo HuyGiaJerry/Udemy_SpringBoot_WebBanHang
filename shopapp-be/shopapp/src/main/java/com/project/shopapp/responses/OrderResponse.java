@@ -1,5 +1,6 @@
 package com.project.shopapp.responses;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.shopapp.models.Order;
 import com.project.shopapp.models.OrderDetail;
@@ -26,8 +27,11 @@ public class OrderResponse  {
     @JsonProperty("phone_number")
     private String phoneNumber;
     private String address;
+
     @JsonProperty("order_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd:HH:mm:ss")
     private LocalDateTime orderDate;
+
     private String note;
     private String status;
     private Float total;
@@ -35,7 +39,9 @@ public class OrderResponse  {
     private String shippingMethod;
     @JsonProperty("shipping_address")
     private String shippingAddress;
+
     @JsonProperty("shipping_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd:HH:mm:ss")
     private Date shippingDate;
     @JsonProperty("payment_method")
     private String paymentMethod;
@@ -46,7 +52,7 @@ public class OrderResponse  {
         return OrderResponse
                 .builder()
                 .id(order.getId())
-                .userId(order.getId())
+                .userId(order.getUser().getId())
                 .fullName(order.getFullName())
                 .email(order.getEmail())
                 .address(order.getAddress())

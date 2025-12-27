@@ -4,6 +4,8 @@ import { environment } from 'src/app/environments/environment';
 import { OrderService } from 'src/app/services/order.service';
 import { OrderDetail } from 'src/app/models/order-detail';
 import { OrderResponse } from 'src/app/responses/order/order.response';
+import { OrderDTO } from 'src/app/dtos/order/order.dto';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-order-detail',
@@ -11,7 +13,6 @@ import { OrderResponse } from 'src/app/responses/order/order.response';
   styleUrls: ['./order-detail.component.scss']
 })
 export class OrderDetailComponent implements OnInit {
-
   orderResponse: OrderResponse = {
     id: 1,
     user_id: 3,
@@ -24,7 +25,7 @@ export class OrderDetailComponent implements OnInit {
     status: '',
     total: '',
     shipping_method: '',
-    shipping_adderess: '',
+    shipping_address: '',
     payment_method: '',
     shipping_date: new Date(),
     order_details: []
@@ -33,6 +34,7 @@ export class OrderDetailComponent implements OnInit {
 
   constructor(
     private orderService: OrderService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -41,7 +43,7 @@ export class OrderDetailComponent implements OnInit {
 
   getOrderDetails(): void {
     debugger
-    const orderId = 11;
+    const orderId = Number(this.route.snapshot.paramMap.get('orderId'));
     this.orderService.getOrderDetail(orderId).subscribe({
       next: (response: any) => {
         debugger
@@ -67,7 +69,7 @@ export class OrderDetailComponent implements OnInit {
         this.orderResponse.status = response.status;
         this.orderResponse.total = response.total;
         this.orderResponse.shipping_method = response.shipping_method;
-        this.orderResponse.shipping_adderess = response.shipping_adderess;
+        this.orderResponse.shipping_address = response.shipping_address;
         this.orderResponse.payment_method = response.payment_method;
         if (Array.isArray(response.shipping_date) && response.shipping_date.length >= 3) {
           this.orderResponse.shipping_date = new Date(
@@ -93,6 +95,8 @@ export class OrderDetailComponent implements OnInit {
       }
     });
   }
+
+
 
 }
 

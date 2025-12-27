@@ -26,6 +26,8 @@ export class OrderDTO {
 
     shipping_method: string;
 
+    status: string;
+
     coupon_code: string;
 
     cart_items: { product_id: number; quantity: number }[];
@@ -40,6 +42,7 @@ export class OrderDTO {
         this.total = data.total;
         this.payment_method = data.payment_method;
         this.shipping_method = data.shipping_method;
+        this.status = data.status;
         this.coupon_code = data.coupon_code;
         this.cart_items = data.cart_items;
     }

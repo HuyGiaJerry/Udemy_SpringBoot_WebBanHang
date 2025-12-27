@@ -30,6 +30,7 @@ export class OrderComponent implements OnInit {
     total: 0,
     payment_method: 'cod',
     shipping_method: 'express',
+    status: '',
     coupon_code: '',
     cart_items: []
   };

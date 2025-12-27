@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --port 4300",
-    "build": "ng build --port 4300",
+    "start": "ng serve",
+    "start:dev": "ng serve --port 4300",
+    "build:dev": "ng build --port 4300",
+    "build:prod": "ng build --configuration=production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -25,6 +27,7 @@
     "bootstrap": "^5.3.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
+    "font-awesome": "^4.7.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.0"

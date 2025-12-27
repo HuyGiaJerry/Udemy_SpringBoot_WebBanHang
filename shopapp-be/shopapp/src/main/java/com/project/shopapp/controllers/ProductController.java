@@ -1,7 +1,6 @@
 package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.ProductDTO;
-import com.project.shopapp.dtos.ProductDetailDTO;
 import com.project.shopapp.dtos.ProductImageDTO;
 import com.project.shopapp.helpers.file.FileHelper;
 import com.project.shopapp.models.Product;
@@ -11,9 +10,10 @@ import com.project.shopapp.responses.ProductResponse;
 import com.project.shopapp.services.product.ProductService;
 import com.project.shopapp.utils.LocalizationUtil;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import net.datafaker.Faker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.PageRequest;
@@ -43,7 +43,10 @@ public class ProductController {
 
     private final ProductService productService;
 
+    // Message toàn cục
     private final LocalizationUtil localizationUtil;
+    // Logger
+    private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
 
     // Tất cả sản phẩm có phân trang (page, limit)
@@ -57,10 +60,10 @@ public class ProductController {
 
         // Tạo pageable từ thông tin trang và giới hạn
         PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("id").ascending());
+        logger.info("Get products list : keyword = {}, categoryId = {}, page = {}, limit = {}", keyword, categoryId, page, limit);
         //PageRequest.of(page, limit, Sort.by("createAt").descending());
         int totalPage = productService.getAllProducts(keyword,categoryId,pageRequest).getTotalPages();
         List<ProductResponse> products = productService.getAllProducts(keyword,categoryId,pageRequest).getContent();
-
         return ResponseEntity.ok(ProductListResponse.builder()
                 .products(products)
                 .totalPages(totalPage)

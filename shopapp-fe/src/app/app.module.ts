@@ -14,15 +14,17 @@ import { UserProfileComponent } from './components/user-profile/user.profile.com
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 
-import { AppComponent } from './app.component';
+import { AppComponent } from './app/app.component';
 import { AppRoutingModule } from './app-routing.module';
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import {
   HttpClientModule,
   HTTP_INTERCEPTORS
 } from '@angular/common/http';
 import { TokenInterceptor } from './interceptors/token.interceptor';
+import { AdminModule } from './components/admin/admin.module';
+
 
 // const routes: Routes = [
 //   { path: '', component: OrderDetailComponent },
@@ -46,6 +48,7 @@ import { TokenInterceptor } from './interceptors/token.interceptor';
     LoginComponent,
     RegisterComponent,
     UserProfileComponent,
+    
   ],
   imports: [
     ReactiveFormsModule,
@@ -54,7 +57,8 @@ import { TokenInterceptor } from './interceptors/token.interceptor';
     HttpClientModule,
     AppRoutingModule,
     NgbModule,
-],
+    AdminModule
+  ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,

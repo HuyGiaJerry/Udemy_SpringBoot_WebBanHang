@@ -2,12 +2,17 @@ package com.project.shopapp.controllers;
 import com.project.shopapp.dtos.OrderDTO;
 import com.project.shopapp.mappers.OrderMapper;
 import com.project.shopapp.models.Order;
+import com.project.shopapp.responses.OrderListResponse;
 import com.project.shopapp.responses.OrderResponse;
 import com.project.shopapp.services.order.OrderService;
 import com.project.shopapp.utils.LocalizationUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -94,5 +99,37 @@ public class OrderController {
             orderService.delete(id);
             return ResponseEntity.ok().body("Delete Order "+id+" successful");
     }
+
+
+
+    @GetMapping("get-orders-by-keyword")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<OrderListResponse> getOrdersByKeyword(
+            @RequestParam(defaultValue = "",required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit
+    ){
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                limit,
+                Sort.by(Sort.Direction.DESC, "id").ascending()
+        );
+
+        Page<OrderResponse> orderPage = orderService.findByKeyword(keyword, pageRequest).map(orderMapper::toResponse);
+
+        // lay tong so trang
+        int totalPages = orderPage.getTotalPages();
+        List<OrderResponse> orders = orderPage.getContent();
+
+
+        return ResponseEntity.ok(
+                OrderListResponse.builder()
+                .orders(orders)
+                .totalPages(totalPages)
+                .build());
+
+    }
+
+
 
 }

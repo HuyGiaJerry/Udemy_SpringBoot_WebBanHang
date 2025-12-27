@@ -8,17 +8,28 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { AuthGuardFn } from './components/guards/auth.guard';
 import { UserProfileComponent } from './components/user-profile/user.profile.component';
+import { AdminComponent } from './components/admin/admin.component';
+import { AdminGuardFn } from './components/guards/admin.guard';
 
 const routes: Routes = [
     { path: '', component: HomeComponent }, // <-- Sửa thành HomeComponent
     { path: 'home', component: HomeComponent },
+
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'products/:id', component: DetailProductComponent },
-    { path: 'orders', component: OrderComponent , canActivate: [AuthGuardFn]},
-    { path: 'orders/:id', component: OrderDetailComponent , canActivate: [AuthGuardFn]},
-    { path: 'user-profile', component: UserProfileComponent , canActivate: [AuthGuardFn]},
+    { path: 'orders', component: OrderComponent, canActivate: [AuthGuardFn] },
+    { path: 'orders/:id', component: OrderDetailComponent, canActivate: [AuthGuardFn] },
+    { path: 'user-profile', component: UserProfileComponent, canActivate: [AuthGuardFn] },
+
+    // admin
+    {
+        path: 'admin',
+        canActivate: [AdminGuardFn],
+        loadChildren: () => import('./components/admin/admin.module').then(m => m.AdminModule)
+    }
     
+
 ];
 
 @NgModule({

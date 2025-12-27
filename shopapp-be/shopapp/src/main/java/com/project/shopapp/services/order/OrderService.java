@@ -10,6 +10,9 @@ import com.project.shopapp.repositories.OrderDetailRepository;
 import com.project.shopapp.repositories.OrderRepository;
 import com.project.shopapp.repositories.ProductRepository;
 import com.project.shopapp.repositories.UserRepository;
+import com.project.shopapp.responses.OrderResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,7 +92,6 @@ public class OrderService extends BaseServiceImpl<Order, OrderDTO, Long> {
     }
 
     @Override
-    @Transactional
     public Order update(Long id, OrderDTO dto) throws DataNotFoundException {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Order not found with id: " + id));
@@ -99,6 +101,7 @@ public class OrderService extends BaseServiceImpl<Order, OrderDTO, Long> {
         orderMapper.updateOrderFromDTO(dto, order);
         order.setUser(user);
         order.setShippingDate(dto.getShippingDate());
+        order.setStatus(dto.getStatus());
         orderRepository.save(order);
         return order;
     }
@@ -119,6 +122,9 @@ public class OrderService extends BaseServiceImpl<Order, OrderDTO, Long> {
         return orderRepository.findByUserId(userId);
     }
 
+    public Page<Order> findByKeyword(String keyword, Pageable pageable) {
+        return orderRepository.findByKeyword(keyword, pageable);
+    }
 
 
 }

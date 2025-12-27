@@ -1,0 +1,45 @@
+.container-fluid {
+    background-color: white;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    box-sizing: border-box;
+}
+
+
+.header {
+    background: #333;
+    padding: 15px 20px;
+    text-align: center;
+    color: white;
+}
+
+
+#sidebar {
+    background: #007bff !important;
+    color: white;
+    height: 100vh;
+    padding-top: 20px;
+    border-right: 1px solid #dee2e6;
+    overflow-y: auto;
+    
+}
+
+#sidebar a {
+    color: white;
+    border-top: 1px  solid rgba(255, 255, 255, 0.2);
+    padding: 10px 15px;
+}
+
+#sidebar a:active{
+    font-weight: bold;
+}
+
+#sidebar a:hover {
+    background: #0056b3 !important;
+    text-decoration: none;
+    color: white;
+}
+
+.icon {
+    padding: 5px;
+}
