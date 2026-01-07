@@ -12,9 +12,8 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
-
+    open-in-view: false
   servlet:
     multipart:
       max-file-size: 10MB
@@ -23,13 +22,38 @@ spring:
       basename: i18n/messages
       encoding: UTF-8
       default-locale: en
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      repositories:            # Không dùng Redis Repositories thì tắt đi tránh báo lỗi nhầm lần với JPA Repositories
+        enabled: false
 api:
-  prefix: api/v1
+  prefix: /api/v1
 jwt:
   expiration: 2592000
   secretKey: Cc0jyWLMnCsPDuQ7+S/v2y3xcasP6pfxzYQ7iVAOaew=
 
-
 logging:
   level:
-    org.springframework.security : DEBUG
+    org.springframework.security: DEBUG
+
+# Health check
+management:
+  endpoints:
+    web:
+      base-path: /api/v1/actuator
+      exposure:
+        include: "health,info"
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+
+# Swagger-ui custom path
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /api-docs
+  show-actuator: true

@@ -79,6 +79,9 @@ public class JwtToken {
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims =  this.extractAllClaims(token);
+        if(claims == null) {
+            return null;
+        }
         return claimsResolver.apply(claims);
     }
 

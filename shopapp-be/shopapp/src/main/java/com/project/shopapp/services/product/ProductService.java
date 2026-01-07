@@ -96,23 +96,27 @@ public class ProductService implements IProductService {
     public Product updateProduct(Long id, ProductDTO productDTO) {
         try {
             Product existingProduct = getProductEntityById(id);
-            if (existingProduct != null) {
-                // Copy các trường từ productDTO vào existingProduct
 
+            // Validate đầu vào => update
+            if(productDTO.getName() != null) {
+                if(productDTO.getName().isEmpty()) throw new InvalidParamException("Product name cannot be empty");
+                existingProduct.setName(productDTO.getName());
+            }
+            if(productDTO.getDescription() != null) existingProduct.setDescription(productDTO.getDescription());
+
+            if(productDTO.getPrice() < 0) throw new InvalidParamException("Product price cannot be negative");
+            else existingProduct.setPrice(productDTO.getPrice());
+            if(productDTO.getThumbnail() != null) existingProduct.setThumpnail(productDTO.getThumbnail());
+
+            if(productDTO.getCategoryId() != null) {
                 Category existingCategory = categoryRepository
                         .findById(productDTO.getCategoryId())
                         .orElseThrow(() -> new DataNotFoundException("Category not found with id: " + productDTO.getCategoryId()));
-
-                existingProduct.setName(productDTO.getName());
-                existingProduct.setDescription(productDTO.getDescription());
-                existingProduct.setPrice(productDTO.getPrice());
                 existingProduct.setCategory(existingCategory);
-                existingProduct.setThumpnail(productDTO.getThumbnail());
-                return productRepository.save(existingProduct);
-            } else {
-                throw new DataNotFoundException("Product not found with id: " + id);
             }
-        } catch (DataNotFoundException e) {
+            return productRepository.save(existingProduct);
+
+        } catch (DataNotFoundException | InvalidParamException e) {
             throw new RuntimeException(e);
         }
 

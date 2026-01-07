@@ -119,7 +119,7 @@ public class OrderService extends BaseServiceImpl<Order, OrderDTO, Long> {
 
 
     public List<Order> getByUserId(Long userId){
-        return orderRepository.findByUserId(userId);
+        return orderRepository.findByUserIdFetchDetails(userId);
     }
 
     public Page<Order> findByKeyword(String keyword, Pageable pageable) {

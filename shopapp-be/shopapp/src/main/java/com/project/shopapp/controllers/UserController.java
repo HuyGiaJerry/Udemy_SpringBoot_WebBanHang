@@ -13,13 +13,14 @@ import com.project.shopapp.utils.MessageKeys;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Objects;
+
 
 @RequiredArgsConstructor
 @RestController
@@ -95,6 +96,7 @@ public class UserController {
     }
 
     @PostMapping("/details")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<UserResponse> getUserDetails(@RequestHeader("Authorization") String authorizationHeader) {
         try{
             String extractedToken = authorizationHeader.substring(7); // Loại bỏ "Bearer " khỏi chuỗi token
@@ -105,32 +107,27 @@ public class UserController {
         }
     }
 
+    // Chỉ tự sửa chính tài khoản của mình (user-> user, admin->admin (match) )
     @PutMapping("/details/{userId}")
-    public ResponseEntity<UserResponse> updateUserDetails(@PathVariable Long userId,
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public ResponseEntity<?> updateUserDetails(@PathVariable Long userId,
                                                           @Valid @RequestBody UserUpdateDTO updateUserDTO,
-                                                          @RequestHeader("authorization") String authorizationHeader,
-                                                          BindingResult bindingResult) {
+                                                          @RequestHeader("Authorization") String authorizationHeader) {
         try{
-            if(bindingResult.hasErrors()) {
-                List<String> errMessages = bindingResult.getFieldErrors()
-                        .stream()
-                        .map(FieldError::getDefaultMessage)
-                        .toList();
-                return ResponseEntity.badRequest().build();
-            }
+
             String extractedToken = authorizationHeader.substring(7); // Loại bỏ "Bearer " khỏi chuỗi token
             User user = userService.getUserDetailFromToken(extractedToken);
 
             // Chỉ được phép cập nhật thông tin của chính mình
-            if(user.getId() != userId) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            if(!Objects.equals(user.getId(), userId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(localizationUtil.getLocalizedMessage(MessageKeys.UPDATE_USER_USERID_NOT_MATCH));
             }
             User updatedUser = userService.updateUser(userId, updateUserDTO);
             return ResponseEntity.ok(UserResponse.fromUser(updatedUser));
 
         } catch (Exception e){
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 

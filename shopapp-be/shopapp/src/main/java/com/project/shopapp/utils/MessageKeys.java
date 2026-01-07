@@ -11,6 +11,8 @@ public class MessageKeys {
     public static final String REGISTER_FAILED = "user.register.register_failed";
     public static final String PASSWORD_NOT_MATCH = "user.register.password_not_match";
 
+    public static final String UPDATE_USER_USERID_NOT_MATCH = "user.update.userid_not_match";
+
     public static final String INSERT_CATEGORY_SUCCESS = "category.insert_category_successfully";
     public static final String INSERT_CATEGORY_FAILED = "category.insert_category_failed";
     public static final String UPDATE_CATEGORY_SUCCESS = "category.update_category_successfully";

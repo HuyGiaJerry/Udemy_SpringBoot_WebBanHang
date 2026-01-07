@@ -1,5 +1,6 @@
 package com.project.shopapp.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.project.shopapp.dtos.ProductDTO;
 import com.project.shopapp.dtos.ProductImageDTO;
 import com.project.shopapp.helpers.file.FileHelper;
@@ -7,20 +8,24 @@ import com.project.shopapp.models.Product;
 import com.project.shopapp.models.ProductImage;
 import com.project.shopapp.responses.ProductListResponse;
 import com.project.shopapp.responses.ProductResponse;
+import com.project.shopapp.services.product.IProductRedisService;
 import com.project.shopapp.services.product.ProductService;
 import com.project.shopapp.utils.LocalizationUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.datafaker.Faker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -38,10 +43,12 @@ import java.util.stream.Collectors;
 @RequestMapping("${api.prefix}/products")
 public class ProductController {
 
-    @Autowired
+
     private FileHelper fileHelper;
 
     private final ProductService productService;
+
+    private final IProductRedisService productRedisService;
 
     // Message toàn cục
     private final LocalizationUtil localizationUtil;
@@ -56,16 +63,35 @@ public class ProductController {
             @RequestParam(defaultValue = "0",name= "category_id") Long categoryId ,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit
-    ) {
+    ) throws JsonProcessingException {
 
         // Tạo pageable từ thông tin trang và giới hạn
         PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("id").ascending());
         logger.info("Get products list : keyword = {}, categoryId = {}, page = {}, limit = {}", keyword, categoryId, page, limit);
         //PageRequest.of(page, limit, Sort.by("createAt").descending());
-        int totalPage = productService.getAllProducts(keyword,categoryId,pageRequest).getTotalPages();
-        List<ProductResponse> products = productService.getAllProducts(keyword,categoryId,pageRequest).getContent();
+        ProductListResponse cacheProducts = productRedisService.getProducts(keyword,categoryId,pageRequest);
+
+        if(cacheProducts == null) {
+            cacheProducts = ProductListResponse.builder()
+                    .products(new ArrayList<>())
+                    .totalPages(0)
+                    .build();
+        }
+
+
+        // Nếu không có trong cache thì lấy từ DB và lưu vào cache
+        int totalPage = cacheProducts.getTotalPages();
+        if(cacheProducts.getProducts() == null || cacheProducts.getProducts().isEmpty()){
+            Page<ProductResponse> pageData = productService.getAllProducts(keyword,categoryId,pageRequest);
+            totalPage = pageData.getTotalPages();
+            cacheProducts.setProducts(pageData.getContent());
+            cacheProducts.setTotalPages(totalPage);
+            productRedisService.saveAllProducts(cacheProducts,keyword,categoryId,pageRequest);
+            logger.info("Cache miss - Load products from DB and save to Redis");
+        }
+
         return ResponseEntity.ok(ProductListResponse.builder()
-                .products(products)
+                .products(cacheProducts.getProducts())
                 .totalPages(totalPage)
                 .build());
     }
@@ -191,9 +217,15 @@ public class ProductController {
 
     // Xóa sản phẩm
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(security = {@SecurityRequirement(name="bearer-key")})
     public ResponseEntity<String> deleteProduct(@PathVariable long id) {
-        productService.deleteProduct(id);
-        return ResponseEntity.ok("Delete Product " + id + " successfully!");
+        try{
+            productService.deleteProduct(id);
+            return ResponseEntity.ok("Delete Product " + id + " successfully!");
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/by-ids")

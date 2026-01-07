@@ -3,7 +3,7 @@ package com.project.shopapp.responses;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.shopapp.models.Order;
-import com.project.shopapp.models.OrderDetail;
+import com.project.shopapp.utils.ConvertDateUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -46,7 +46,7 @@ public class OrderResponse  {
     @JsonProperty("payment_method")
     private String paymentMethod;
     @JsonProperty("order_details")
-    private List<OrderDetail> orderDetails;
+    private List<OrderDetailResponse> orderDetails;
 
     public static OrderResponse fromOrder(Order order) {
         return OrderResponse
@@ -59,11 +59,24 @@ public class OrderResponse  {
                 .phoneNumber(order.getPhoneNumber())
                 .status(order.getStatus())
                 .total(order.getTotal())
+                .orderDate(ConvertDateUtil.toLocalDateTime(order.getOrderDate()))
+                .shippingDate(ConvertDateUtil.toDate(order.getShippingDate()))
                 .shippingMethod(order.getShippingMethod())
                 .shippingAddress(order.getShippingAddress())
                 .paymentMethod(order.getPaymentMethod())
+
                 .note(order.getNote())
-                .orderDetails(order.getOrderDetails())
+                .orderDetails(order.getOrderDetails() == null ? java.util.List.of()
+                        : order.getOrderDetails().stream().map(od -> OrderDetailResponse.builder()
+                        .id(od.getId())
+                        .orderId(order.getId())
+                        .productId(od.getProduct().getId())   // nếu LAZY thì phải fetch (bên dưới)
+                        .price(od.getPrice())
+                        .quantity(od.getQuantity())
+                        .total(od.getTotal())
+                        .color(od.getColor())
+                        .build()
+                ).toList())
                 .build();
 
     }

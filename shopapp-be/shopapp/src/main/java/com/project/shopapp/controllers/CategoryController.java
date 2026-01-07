@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ public class CategoryController {
 
     // Thêm mới 1 category
     @PostMapping("")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryResponse> createCategory(
             @Valid
             @RequestBody CategoryDTO categoryDTO,
@@ -47,13 +49,16 @@ public class CategoryController {
         Category newCategory = categoryService.create(categoryDTO);
         return ResponseEntity.ok(CategoryResponse
                 .builder()
+                .id(newCategory.getId())
+                .name(newCategory.getName())
                 .message(localizationUtil.getLocalizedMessage(MessageKeys.INSERT_CATEGORY_SUCCESS))
                 .build()
         );
     }
 
     // Hiển thị tất cả
-    @GetMapping("") // http://localhost:8088/api/v1/categories?page=2&limit=10
+    // http://localhost:8088/api/v1/categories?page=2&limit=10
+    @GetMapping("")
     public ResponseEntity<List<Category>> getAllCategories(
             @PathParam("page") int page,
             @PathParam("limit") int limit) {

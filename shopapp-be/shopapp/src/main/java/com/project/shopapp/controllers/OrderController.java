@@ -17,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -54,13 +55,20 @@ public class OrderController {
     }
 
     // Get all orders by user_id
+
     @GetMapping("/user/{user_id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+
     public ResponseEntity<?> getOrdersByUserId(
             @Valid @PathVariable("user_id") Long userId) {
         try {
             List<Order> orders = orderService.getByUserId(userId);
+            List<OrderResponse> orderResponses = new ArrayList<>();
+            for(Order order : orders){
+                orderResponses.add(OrderResponse.fromOrder(order));
+            }
 
-            return ResponseEntity.ok().body(orders);
+            return ResponseEntity.ok().body(orderResponses);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
